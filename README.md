@@ -5,7 +5,7 @@ MESCADAS Crux는 ***MESCADAS 프로젝트*** 의 중앙 서버 웹애플리케�
 
 # ■ MSD Crux 소스 코드 관리
 ## 컨벤션
-* [환경별 서버 구성과 Git 브랜치 전략](./docs/CONVELTIONS.md)
+* [환경별 서버 구성과 Git 브랜치 전략](./docs/CONVENTIONS.md)
 * [DB 네이밍 및 C# 코딩 컨벤션](./docs/CONVENTIONS-CODE.md)
 
 
