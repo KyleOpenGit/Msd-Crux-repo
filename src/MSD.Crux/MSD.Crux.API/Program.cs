@@ -21,7 +21,6 @@ var app = builder.Build();
  *************************************************/
 if (app.Environment.IsDevelopment() || app.Environment.IsLocal())
 {
-    Console.WriteLine($"실행중인 Environment: {app.Environment.EnvironmentName}");
     app.UseSwagger();
     app.UseSwaggerUI();
 }
