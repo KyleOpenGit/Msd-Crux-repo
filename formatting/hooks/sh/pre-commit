@@ -2,6 +2,12 @@
 # Git 루트 디렉토리로 이동
 cd "$(git rev-parse --show-toplevel)"
 
+# dotnet-format 설치 여부 확인
+if ! dotnet tool list -g | grep -q dotnet-format; then
+    echo "pre-commit 메시지: 'dotnet-format' 도구가 설치되어 있지 않습니다. 설치 명령어: dotnet tool install -g dotnet-format"
+    exit 0  # 설치 안내 후 커밋은 허용
+fi
+
 echo "Running dotnet format..."
 dotnet format ./src/MSD.Crux
 RESULT=$?
