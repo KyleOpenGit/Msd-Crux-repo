@@ -1,6 +1,9 @@
 /*******************
  * Web Host Builder
  *******************/
+
+using MSD.Crux.API.Helpers;
+
 var builder = WebApplication.CreateBuilder(args);
 
 /* DI Container   ******************/
@@ -16,10 +19,10 @@ var app = builder.Build();
 /*************************************************
  * HTTP request 파이프라인에 미들웨어 추가 및 설정
  *************************************************/
-if (app.Environment.IsDevelopment())
+if (app.Environment.IsDevelopment() || app.Environment.IsLocal())
 {
-  app.UseSwagger();
-  app.UseSwaggerUI();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
