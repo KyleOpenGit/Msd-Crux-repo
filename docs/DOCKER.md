@@ -6,7 +6,10 @@
 ## □ prerequisites
 로컬 PC에 도커가 설치, 실행되어 있어야 합니다. 
 
+도커 이미지와 컨테이너 관리에대한 사항은 Docker Desktop 사용법 또는 [Docker 문서](https://docs.docker.com)를 참고하십시오.
+
 ## 🔑 DB 시크릿
+아래 내용을 수행해서 준비되는 db의 비밀정보는 아래와 같습니다.
 
 * 유저와 비밀번호: 
   * `root` / `vaporcloud`
@@ -117,38 +120,69 @@ $ docker exec -it msd_crux_postgres bash
 
 접속이 되고나면 SQL 문과 PostgreSQL CLI 명령어 셋을 사용할 수 있습니다.
 
-### 2) DB 유저 확인
-~~~
-# \du
-~~~
+### 2) 포스트그레스 CLI 명령어 셋
+
+* `\l` : 데이터베이스 목록 보기
+* `\du` : DB User 목록 보기
+* `\dt` : 테이블 목록 보기
+* `SELECT * FROM timescaledb_information.hypertables;` : 하이퍼테이블 목록보기
+* `\d {스키마}.{테이블이름}` : 해당 스키마(기본은 public)의 테이블 이름
+* `\d {테이블이름}` : public 스키마의 특정 테이블 구조
+* `exit` : 접속 종료
+
+
+
+#### DB 유저 확인
+
+> \du
+
 `\du` 명령어로 `msd_db_user`가 확인되어야 합니다.
 
-### 3) 테이블 확인
-~~~
-# \dt
-~~~
-`\dt` 명령어로 `user`테이블이 확인되어야 합니다.
 
-### 4) `user` 테이블 구조 확인
-~~~
-# \d public.user
-~~~
-`\d {public스키마}.{테이블명}` 형식 명령어를 입력해서 확인할 수 있습니다.
+
+#### 테이블 확인
+
+> \dt
+
+`\dt` 명령어로 여러 테이블이 확인되어야 합니다.
+
+#### 테이블 구조 확인
+> \d public.user
+
+테이블 구조는 `\d {public스키마}.{테이블명}` 형식 명령어를 입력해서 확인할 수 있습니다.
 
 ~~~
-                                         Table "public.user"
-     Column      |          Type           | Collation | Nullable |              Default              
------------------+-------------------------+-----------+----------+-----------------------------------
- id              | integer                 |           | not null | nextval('users_id_seq'::regclass)
- login_id        | character varying(255)  |           | not null | 
- login_pw        | character varying(2048) |           | not null | 
- salt            | character(6)            |           | not null | 
- name            | character varying(25)   |           | not null | 
- employee_number | character(9)            |           |          | 
- roles           | character varying(255)  |           |          | 
- profile_img     | text                    |           |          | 
- profile_text    | text                    |           |          | 
+                                        Table "public.user"
+     Column      |          Type          | Collation | Nullable |             Default              
+-----------------+------------------------+-----------+----------+----------------------------------
+ id              | integer                |           | not null | nextval('user_id_seq'::regclass)
+ login_id        | character varying(30)  |           | not null | 
+ login_pw        | character varying(128) |           | not null | 
+ salt            | character(22)          |           | not null | 
+ name            | character varying(100) |           | not null | 
+ employee_number | character(10)          |           |          | 
+ roles           | character varying(100) |           |          | 
+ profile_img     | text                   |           |          | 
+ profile_text    | text                   |           |          | 
 Indexes:
-    "users_pkey" PRIMARY KEY, btree (id)
-    "users_login_id_key" UNIQUE CONSTRAINT, btree (login_id)
+    "user_pkey" PRIMARY KEY, btree (id)
+    "user_login_id_key" UNIQUE CONSTRAINT, btree (login_id)
 ~~~
+
+#### 하이퍼 테이블 (시계열 테이블) 구조 확인
+
+> SELECT * FROM timescaledb_information.hypertables;
+
+
+~~~
+ hypertable_schema | hypertable_name | owner | num_dimensions | num_chunks | compression_enabled | tablespaces 
+-------------------+-----------------+-------+----------------+------------+---------------------+-------------
+ public            | injection_cum   | root  |              2 |          0 | f                   | 
+ public            | vision_cum      | root  |              2 |          0 | f                   | 
+(2 rows)
+
+~~~
+
+### 접속 종료 명령어
+> exit;
+두번 입력하면 컨테이너를 빠져나갑니다.
