@@ -8,7 +8,7 @@
 - 테이블이름 & 칼럼 이름
 - key 이름 (No SQL)
 
-예시: 
+예시:
 - `my_database`.`my_schema`
 - `my_table`
 - `my_column`
@@ -21,18 +21,23 @@
 ----
 ----
 
-# ■ C# 코드 컨벤션 
+# ■ C# 코드 컨벤션
 
 ## EditorConfig 적용
 코드 포매팅 규칙은 다양한 코드 에디터에서 공통으로 적용가능한 [EditorConfig](https://editorconfig.org)를 사용합니다. 이를 위해 `.editorconfig` 파일이 레포지토리에 포함되었습니다.
 
  > 첨부된 `.editorconfig` 파일의 내용은 공개된 [MS 닷넷팀 editorconfig 파일](https://github.com/dotnet/runtime/blob/main/.editorconfig)의 내용과 동일합니다.
 
-각 개발자들은 자신이 사용하는 코드에디터/IDE에 EditorConfig를 적용하여 코드포매팅을 적용하거나, Git Hooks의 `pre-commit` hook을 사용하여 커밋 전 포매팅이 자동으로 적용되도록 할 수 있습니다.
-* Visual Stuido: [EditorConfig를 사용하여 일관된 코딩 스타일 정의](https://learn.microsoft.com/ko-kr/visualstudio/ide/create-portable-custom-editor-options?view=vs-2022)
-* Jetbrains의 Rider: Use [EditorConfig](https://www.jetbrains.com/help/rider/Using_EditorConfig.html)
-* VS Code: [EditorConfig for VS Code](https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig) 공식 확장프로그램
-* [Git Hooks](https://git-scm.com/book/ko/v2/Git맞춤-Git-Hooks)
+각 개발자들은 자신이 사용하는 코드에디터/IDE에 EditorConfig를 적용하여 코드포매팅을 적용하거나,  [Git Hooks](https://git-scm.com/book/ko/v2/Git맞춤-Git-Hooks)의 `pre-commit` hook을 사용하면 커밋 전 포매팅이 자동으로 적용되도록 할 수 있습니다.
+
+
+[PRE-COMMIT.md](PRE-COMMIT.md) 내용을 확인해서 git pre-commit을 설정하십시오.
+
+
+* IDE/코드에디터에서 EditorConfig 적용하기:
+  * Visual Stuido: [EditorConfig를 사용하여 일관된 코딩 스타일 정의](https://learn.microsoft.com/ko-kr/visualstudio/ide/create-portable-custom-editor-options?view=vs-2022)
+  * Jetbrains의 Rider: Use [EditorConfig](https://www.jetbrains.com/help/rider/Using_EditorConfig.html)
+  * VS Code: [EditorConfig for VS Code](https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig) 공식 확장프로그램
 
 
 ## 컨벤션
@@ -67,11 +72,11 @@
 ## 접두어 (suffix)
 
 - 일반 private 필드 (전역변수)
-  - 언더바 접두어 적용 
+  - 언더바 접두어 적용
     - ex) `_myPrivate`
 
 ## 매개변수 명
-생성자, 메소드에서의 매개변수 이름은 접두어 없는 카멜 케이스 사용. 
+생성자, 메소드에서의 매개변수 이름은 접두어 없는 카멜 케이스 사용.
 
 단, C# v12.0에 소개된 Primary Constructor(프라이머리 생성자, 주요 생성자) 매개변수 이름은 private 필드처럼 언더바(`_`)를 접두어로 붙이도록 합니다.
 
@@ -91,16 +96,16 @@ public class MyClass(IServiceProvider _provider)  //주생성자에서 이름 _p
 ## 변수에대한 규칙
 * 일반 인스턴스 필드는 public 금지: public 으로 노출할 일반필드는 모두 프라퍼티로 변환해 사용하고 프라퍼티 네이밍 규칙에 따름
 * 상수필드는 Public 허용, 상수필드 네이밍 규칙 적용
-    
+
     | 필드 유형             | 접근 제한자         | 접두어 | 네이밍 스타일 | 예                     |
     |-----------------------|--------------------|--------|----------------|------------------------|
     | 상수 필드 (const)     | public, private 등 | 없음   | PascalCase     | MaxItems, Pi          |
     | 정적 필드 (static)    | private 등         | s_     | camelCase      | s_counter, s_logger   |
     | 인스턴스 필드         | private 등         | _      | camelCase      | _userName, _age       |
-    
 
 
-* 프로퍼티 (public): 
+
+* 프로퍼티 (public):
 앞글자 대문자: 일반 프라퍼티, 정적 프라퍼티
     ~~~
     public int Age { get; set; }
@@ -117,7 +122,7 @@ public class MyClass(IServiceProvider _provider)  //주생성자에서 이름 _p
     ~~~
 
 
-* 상수: 
+* 상수:
   * const 또는 readonly 필드: 앞글자 대문자  (public 필드 허용)
     ~~~
     public const double Pi = 3.14159;
