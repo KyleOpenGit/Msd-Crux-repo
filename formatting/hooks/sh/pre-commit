@@ -1,0 +1,23 @@
+#!/bin/bash
+# Git 루트 디렉토리로 이동
+cd "$(git rev-parse --show-toplevel)"
+
+echo "Running dotnet format..."
+dotnet format ./src/MSD.Crux
+RESULT=$?
+
+if [ $RESULT -ne 0 ]; then
+    echo "pre-commit 메시지: 포맷팅 중 문제가 발생했습니다. 포맷팅 규칙에 맞지 않을 수 있습니다."
+else
+    echo "pre-commit 메시지: 포맷팅 완료!"
+fi
+
+# Git 작업 디렉토리에서 변경된 파일이 있으면 다시 스테이징
+CHANGED_FILES=$(git diff --name-only)
+if [ -n "$CHANGED_FILES" ]; then
+    echo "pre-commit 메시지: 포맷팅된 파일을 다시 스테이징 후 커밋합니다."
+    git add $CHANGED_FILES
+fi
+
+# 항상 성공 상태 반환
+exit 0
