@@ -1,6 +1,6 @@
 @MSD.Crux.API_HostAddress = http://localhost:5125
 
-GET {{MSD.Crux.API_HostAddress}}/weatherforecast/
+GET {{MSD.Crux.API_HostAddress}}/api/
 Accept: application/json
 
 ###
