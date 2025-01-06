@@ -22,7 +22,14 @@ public interface IUserRepo
     Task<User?> GetByLoginIdAsync(string loginId);
 
     /// <summary>
-    /// 모든 유저를 조회
+    /// Employee Number를 기준으로 특정 유저를 조회.
+    /// </summary>
+    /// <param name="employeeNumber">사원번호</param>
+    /// <returns>조회된 유저 정보 또는 null</returns>
+    Task<User?> GetByEmployeeNumberAsync(string employeeNumber);
+
+    /// <summary>
+    /// 모든 유저를 조회.
     /// </summary>
     /// <returns>유저 목록</returns>
     Task<IEnumerable<User>> GetAllAsync();
