@@ -14,7 +14,7 @@ public class Employee
     /// </summary>
     public MillenniumGender Gender { get; set; }
     /// <summary>
-    /// 해당연도 입사 순서
+    /// 해당 연도 입사 순서
     /// </summary>
     public short Sequence { get; set; }
     /// <summary>
@@ -26,11 +26,11 @@ public class Employee
     /// </summary>
     public string? Department { get; set; }
     /// <summary>
-    /// 근무 교대조 ( A, B)
+    /// 근무 교대조 (예: A, B)
     /// </summary>
     public string? Shift { get; set; }
     /// <summary>
-    /// 직책
+    /// 직책 (예: 팀장, 사원)
     /// </summary>
     public string? Title { get; set; }
     /// <summary>
@@ -38,9 +38,13 @@ public class Employee
     /// </summary>
     public DateTime? JoinDate { get; set; }
     /// <summary>
-    /// user 등록 신청 상태 (pending, submitted, approved, rejected)
+    /// 요청된 유저 권한 (쉼표 구분된 문자열)
     /// </summary>
-    public string RegistrationStatus { get; set; } = "pending";
+    public string? RequestingUserRoles { get; set; }
+    /// <summary>
+    /// 직원 사진 (Base64 인코딩된 문자열)
+    /// </summary>
+    public string? Photo { get; set; }
 }
 
 /// <summary>
