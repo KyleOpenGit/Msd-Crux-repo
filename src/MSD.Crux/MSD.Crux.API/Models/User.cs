@@ -4,6 +4,7 @@ namespace MSD.Crux.API.Models;
 /// User 엔티티 클래스 - DB의 user 테이블 매핑.
 /// HMI, MES, 시스템 등록 유저
 /// </summary>
+/// <remarks>LoginId, LoginPw , Salt 는 모두 NULL 이거나 모두 NOT NULL 이어야한다. </remarks>
 public class User
 {
     /// <summary>
@@ -11,35 +12,27 @@ public class User
     /// </summary>
     public int Id { get; set; }
     /// <summary>
-    /// 로그인 아이디
+    /// 사원번호 (employee 테이블의 year + gender + sequence)
     /// </summary>
-    public string LoginId { get; set; } = string.Empty;
+    public string EmployeeNumber { get; set; } = string.Empty;
     /// <summary>
-    ///  로그인 비번: password + salt가 단방향 암호화 해싱된 문자열
+    /// 로그인 아이디 (NULL 가능)
     /// </summary>
-    public string LoginPw { get; set; } = string.Empty;
+    public string? LoginId { get; set; }
     /// <summary>
-    ///  해싱되기 전에 password 뒤에 추가된 22글자고정 랜덤 문자열
+    /// 로그인 비밀번호 (NULL 가능, PBKDF2로 해싱된 값)
     /// </summary>
-    public string Salt { get; set; } = string.Empty;
+    public string? LoginPw { get; set; }
     /// <summary>
-    /// 직원 이름
+    /// 비밀번호 해싱에 사용된 Salt (22글자, NULL 가능)
+    /// </summary>
+    public string? Salt { get; set; }
+    /// <summary>
+    /// 직원 이름 (100글자 이내)
     /// </summary>
     public string Name { get; set; } = string.Empty;
     /// <summary>
-    /// 사원번호
+    /// 유저 권한 (복수 조합 가능, 쉼표로 구분된 문자열 255글자 이내)
     /// </summary>
-    public string? EmployeeNumber { get; set; }
-    /// <summary>
-    /// 유저 권한 (복수 조합 가능. 쉼표로 구분)
-    /// </summary>
-    public string? Roles { get; set; } = "work";
-    /// <summary>
-    /// 프사
-    /// </summary>
-    public string? ProfileImg { get; set; }
-    /// <summary>
-    /// 프사소개
-    /// </summary>
-    public string? ProfileText { get; set; }
+    public string? Roles { get; set; }
 }

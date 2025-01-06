@@ -3,6 +3,8 @@
  *******************/
 
 using MSD.Crux.API.Helpers;
+using MSD.Crux.API.Repositories;
+using MSD.Crux.API.Repositories.InMemory;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +15,7 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSingleton<IUserRepo, UserRepoInMemory>();
 
 var app = builder.Build();
 
