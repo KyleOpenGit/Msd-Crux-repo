@@ -5,7 +5,7 @@ echo "$(uname): .git에  pre-commit hook 추가..."
 # 플랫폼 확인 (Linux 또는 macOS)
 if [[ "$(uname)" == "Linux" || "$(uname)" == "Darwin" ]]; then
     # Linux/macOS 용 pre-commit 파일 복사
-    cp ./formatting/hooks/sh/pre-commit .git/hooks/pre-commit
+    cp ./formatting/hooks/bash/pre-commit .git/hooks/pre-commit
     chmod +x .git/hooks/pre-commit
     echo "성공 Pre-commit hook이 .git에 추가되었습니다."
 else

@@ -44,9 +44,9 @@ formatting/
 ├── setup.sh                 # Linux/macOS 용 pre-commit 추가 스크립트
 ├── setup.bat                # Windows CMD 용 pre-commit 추가 스크립트
 ├── hooks/
-│   ├── sh/
+│   ├── bash/
 │   │   └── pre-commit       # Linux/macOS 용 Git Hook
-│   └── bat/
+│   └── windows/
 │       └── pre-commit       # Windows CMD 용 Git Hook
 ~~~
 

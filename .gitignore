@@ -1,6 +1,8 @@
 appsettings.Development.json
 appsettings.Stage.json
 appsettings.Production.json
+# EditorConfig rormatting error log file
+format-log.txt
 ####################  OS created files  ####################
 # Ignore Windows system files
 Thumbs.db

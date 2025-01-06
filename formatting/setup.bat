@@ -2,7 +2,7 @@
 echo 윈도우환경 pre-commit hook 설정...
 
 :: Windows용 pre-commit 파일 복사
-copy formatting\hooks\bat\pre-commit .git\hooks\pre-commit >nul
+copy formatting\hooks\windows\pre-commit .git\hooks\pre-commit >nul
 
 :: 성공 메시지 출력
 if %ERRORLEVEL% EQU 0 (
