@@ -77,7 +77,7 @@ public class EmployeeService(IEmployeeRepo _employeeRepo)
     {
         return new EmployeeInfoRspDto
         {
-            EmployeeNumber = GenericHelper.ConvertToEmployeeNumber(employee.Year, (short)employee.Gender, employee.Sequence),
+            EmployeeNumber = GenericHelper.ConvertToEmployeeNumber(employee.Year, employee.Gender, employee.Sequence),
             Sex = GenericHelper.ConvertToSex(employee.Gender),
             Name = employee.Name,
             Department = employee.Department,

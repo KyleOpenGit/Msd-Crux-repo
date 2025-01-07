@@ -39,7 +39,7 @@ public class EmployeeController(EmployeeService _employeeService) : ControllerBa
     /// <summary>
     /// 특정 직원 조회
     /// </summary>
-    [HttpGet("{employeeNumber}")]
+    [HttpGet("{employeeNumber:int}")]
     public async Task<IActionResult> GetEmployeeByNumber(int employeeNumber)
     {
         var employee = await _employeeService.GetEmployeeByNumberAsync(employeeNumber);
@@ -52,7 +52,7 @@ public class EmployeeController(EmployeeService _employeeService) : ControllerBa
     /// <summary>
     /// 직원 정보 업데이트 및 권한 신청
     /// </summary>
-    [HttpPut("{employeeNumber}")]
+    [HttpPut("{employeeNumber:int}")]
     public async Task<IActionResult> UpdateEmployee(int employeeNumber, [FromBody] Employee reqBody)
     {
         if (!ModelState.IsValid)
@@ -74,7 +74,7 @@ public class EmployeeController(EmployeeService _employeeService) : ControllerBa
     /// <summary>
     /// 특정 직원 삭제
     /// </summary>
-    [HttpDelete("{employeeNumber}")]
+    [HttpDelete("{employeeNumber:int}")]
     public async Task<IActionResult> DeleteEmployee(int employeeNumber)
     {
         try

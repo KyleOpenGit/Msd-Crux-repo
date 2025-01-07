@@ -11,7 +11,15 @@ public static class GenericHelper
     /// <param name="gender">성별 코드</param>
     /// <param name="sequence">입사 순번</param>
     /// <returns>조합된 Employee Number: 연도(4자리) + 성별(1자리) + 순번(4자리)</returns>
-    public static int ConvertToEmployeeNumber(short year, short gender, short sequence) => year * 1000000 + gender * 10000 + sequence;
+    public static int ConvertToEmployeeNumber(short year, MillenniumGender gender, short sequence)
+    {
+        return year * 1000000 + (int)gender * 10000 + sequence;
+    }
 
-    public static string ConvertToSex(MillenniumGender gender) => gender switch { MillenniumGender.Male or MillenniumGender.MMale => "남자", MillenniumGender.Female or MillenniumGender.MFemale => "여자" };
+    public static string ConvertToSex(MillenniumGender gender)
+        => gender switch
+        {
+            MillenniumGender.Male or MillenniumGender.MMale => "남자",
+            MillenniumGender.Female or MillenniumGender.MFemale => "여자"
+        };
 }

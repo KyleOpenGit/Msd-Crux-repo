@@ -22,7 +22,7 @@ public class EmployeeRepoInMemory : IEmployeeRepo
     /// <returns>존재여부</returns>
     public Task<bool> ExistsWithEmployeeNumberAsync(Employee employee)
     {
-        int employeeNumber = GenericHelper.ConvertToEmployeeNumber(employee.Year, (short)employee.Gender, employee.Sequence);
+        int employeeNumber = GenericHelper.ConvertToEmployeeNumber(employee.Year, employee.Gender, employee.Sequence);
         return Task.FromResult(_employees.ContainsKey(employeeNumber));
     }
 
@@ -50,7 +50,7 @@ public class EmployeeRepoInMemory : IEmployeeRepo
     /// <returns></returns>
     public Task AddAsync(Employee employee)
     {
-        int employeeNumber = GenericHelper.ConvertToEmployeeNumber(employee.Year, (short)employee.Gender, employee.Sequence);
+        int employeeNumber = GenericHelper.ConvertToEmployeeNumber(employee.Year, employee.Gender, employee.Sequence);
 
         _employees[employeeNumber] = employee;
         return Task.CompletedTask;
@@ -61,7 +61,7 @@ public class EmployeeRepoInMemory : IEmployeeRepo
     /// </summary>
     public Task UpdateAsync(Employee employee)
     {
-        int employeeNumber = GenericHelper.ConvertToEmployeeNumber(employee.Year, (short)employee.Gender, employee.Sequence);
+        int employeeNumber = GenericHelper.ConvertToEmployeeNumber(employee.Year, employee.Gender, employee.Sequence);
 
         if (!_employees.ContainsKey(employeeNumber))
         {
