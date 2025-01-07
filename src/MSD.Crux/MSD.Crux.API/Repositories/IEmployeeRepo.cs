@@ -8,6 +8,13 @@ namespace MSD.Crux.API.Repositories;
 public interface IEmployeeRepo
 {
     /// <summary>
+    /// 직원 존재 여부 확인
+    /// </summary>
+    /// <param name="employee">조회할 Employee 객체</param>
+    /// <returns>존재여부</returns>
+    Task<bool> ExistsWithEmployeeNumberAsync(Employee employee);
+
+    /// <summary>
     /// 직원 번호로 특정 직원 조회
     /// </summary>
     Task<Employee?> GetByEmployeeNumberAsync(int employeeNumber);

@@ -41,11 +41,11 @@ public class Employee
     /// <summary>
     /// 요청된 유저 권한 (쉼표 구분된 문자열)
     /// </summary>
-    public string? ApplyUserRoles { get; set; }
+    public string? ApplyUserRoles { get; set; } = null;
     /// <summary>
     /// 직원 사진 (Base64 인코딩된 문자열)
     /// </summary>
-    public string? Photo { get; set; }
+    public string? Photo { get; set; } = null;
 }
 
 /// <summary>

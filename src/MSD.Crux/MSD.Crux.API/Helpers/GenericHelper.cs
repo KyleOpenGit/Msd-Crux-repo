@@ -1,3 +1,5 @@
+using MSD.Crux.API.Models;
+
 namespace MSD.Crux.API.Helpers;
 
 public static class GenericHelper
@@ -10,4 +12,6 @@ public static class GenericHelper
     /// <param name="sequence">입사 순번</param>
     /// <returns>조합된 Employee Number: 연도(4자리) + 성별(1자리) + 순번(4자리)</returns>
     public static int ConvertToEmployeeNumber(short year, short gender, short sequence) => year * 1000000 + gender * 10000 + sequence;
+
+    public static string ConvertToSex(MillenniumGender gender) => gender switch { MillenniumGender.Male or MillenniumGender.MMale => "남자", MillenniumGender.Female or MillenniumGender.MFemale => "여자" };
 }

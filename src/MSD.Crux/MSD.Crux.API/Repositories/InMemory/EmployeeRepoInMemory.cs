@@ -16,6 +16,17 @@ public class EmployeeRepoInMemory : IEmployeeRepo
     private readonly ConcurrentDictionary<int, Employee> _employees = new();
 
     /// <summary>
+    /// 직원 존재 여부 확인
+    /// </summary>
+    /// <param name="employee">조회할 Employee 객체</param>
+    /// <returns>존재여부</returns>
+    public Task<bool> ExistsWithEmployeeNumberAsync(Employee employee)
+    {
+        int employeeNumber = GenericHelper.ConvertToEmployeeNumber(employee.Year, (short)employee.Gender, employee.Sequence);
+        return Task.FromResult(_employees.ContainsKey(employeeNumber));
+    }
+
+    /// <summary>
     /// 사원번호로 직원 조회
     /// </summary>
     public Task<Employee?> GetByEmployeeNumberAsync(int employeeNumber)
@@ -35,11 +46,13 @@ public class EmployeeRepoInMemory : IEmployeeRepo
     /// <summary>
     /// 새로운 직원 추가
     /// </summary>
+    /// <param name="employee"></param>
+    /// <returns></returns>
     public Task AddAsync(Employee employee)
     {
-        int employeeNumberKey = GenericHelper.ConvertToEmployeeNumber(employee.Year, (short)employee.Gender, employee.Sequence);
+        int employeeNumber = GenericHelper.ConvertToEmployeeNumber(employee.Year, (short)employee.Gender, employee.Sequence);
 
-        _employees[employeeNumberKey] = employee;
+        _employees[employeeNumber] = employee;
         return Task.CompletedTask;
     }
 

@@ -5,6 +5,7 @@
 using MSD.Crux.API.Helpers;
 using MSD.Crux.API.Repositories;
 using MSD.Crux.API.Repositories.InMemory;
+using MSD.Crux.API.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +18,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IUserRepo, UserRepoInMemory>();
 builder.Services.AddSingleton<IEmployeeRepo, EmployeeRepoInMemory>();
+builder.Services.AddScoped<EmployeeService>();
+
 var app = builder.Build();
 
 /*************************************************
