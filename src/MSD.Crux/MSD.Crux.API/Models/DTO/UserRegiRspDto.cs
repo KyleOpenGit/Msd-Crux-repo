@@ -15,7 +15,7 @@ public class UserRegiRspDto
     /// <summary>
     /// 직원번호. employee테이블의 year + gender + sequence
     /// </summary>
-    public string EmployeeNumber { get; set; } = string.Empty;
+    public int EmployeeNumber { get; set; }
     /// <summary>
     /// 직원이름
     /// </summary>

@@ -19,6 +19,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IEmployeeRepo, EmployeeRepoInMemory>();
 builder.Services.AddSingleton<IUserRepo, UserRepoInMemory>();
 builder.Services.AddScoped<EmployeeService>();
+builder.Services.AddScoped<UserService>();
 
 var app = builder.Build();
 

@@ -39,7 +39,7 @@ public class UserRepoInMemory : IUserRepo
     /// </summary>
     /// <param name="employeeNumber">사원번호</param>
     /// <returns>조회된 유저 정보 또는 null</returns>
-    public Task<User?> GetByEmployeeNumberAsync(string employeeNumber)
+    public Task<User?> GetByEmployeeNumberAsync(int employeeNumber)
     {
         var user = _users.Values.FirstOrDefault(u => u.EmployeeNumber == employeeNumber);
         return Task.FromResult(user);
@@ -136,10 +136,10 @@ public class UserRepoInMemory : IUserRepo
             throw new ArgumentException("유저 이름은 필수입니다.", nameof(user.Name));
         }
 
-        // EmployeeNumber가 비어 있으면 예외 발생
-        if (string.IsNullOrWhiteSpace(user.EmployeeNumber))
+        // EmployeeNumber가 기본값(0)이면 예외 발생
+        if (user.EmployeeNumber <= 0)
         {
-            throw new ArgumentException("사원번호는 필수입니다.", nameof(user.EmployeeNumber));
+            throw new ArgumentException("사원번호는 1 이상의 값이어야 합니다.", nameof(user.EmployeeNumber));
         }
     }
 }

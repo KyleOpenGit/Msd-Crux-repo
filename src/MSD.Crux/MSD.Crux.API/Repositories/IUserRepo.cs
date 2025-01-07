@@ -20,7 +20,7 @@ public interface IUserRepo
     /// <summary>
     /// Employee Number로 특정 유저 조회
     /// </summary>
-    Task<User?> GetByEmployeeNumberAsync(string employeeNumber);
+    Task<User?> GetByEmployeeNumberAsync(int employeeNumber);
 
     /// <summary>
     /// 모든 유저 조회

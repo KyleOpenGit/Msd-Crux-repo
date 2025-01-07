@@ -1,6 +1,3 @@
-// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-
 namespace MSD.Crux.API.Models;
 
 /// <summary>
@@ -8,10 +5,6 @@ namespace MSD.Crux.API.Models;
 /// </summary>
 public class UserUpdateReqDto
 {
-    /// <summary>
-    /// 정보를 변경할 유저의 직원번호
-    /// </summary>
-    public string EmployeeNumber { get; set; } = string.Empty;
     /// <summary>
     /// 변경될 직원이름
     /// </summary>

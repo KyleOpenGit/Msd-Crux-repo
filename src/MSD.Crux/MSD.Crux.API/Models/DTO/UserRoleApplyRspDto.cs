@@ -9,7 +9,7 @@ public class UserRoleApplyRspDto
     /// <summary>
     /// 직워번호
     /// </summary>
-    public string EmployeeNumber { get; set; } = string.Empty;
+    public int EmployeeNumber { get; set; }
     /// <summary>
     /// 이름
     /// </summary>

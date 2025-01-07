@@ -8,7 +8,7 @@ public class UserRegiReqDto
     /// <summary>
     /// 직원번호 (employee 테이블의 year + gender + sequence)
     /// </summary>
-    public string EmployeeNumber { get; set; } = string.Empty;
+    public int EmployeeNumber { get; set; }
     /// <summary>
     /// 직원이름 (100글자 이내)
     /// </summary>

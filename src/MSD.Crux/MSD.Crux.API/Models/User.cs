@@ -14,7 +14,7 @@ public class User
     /// <summary>
     /// 사원번호 (employee 테이블의 year + gender + sequence)
     /// </summary>
-    public string EmployeeNumber { get; set; } = string.Empty;
+    public int EmployeeNumber { get; set; }
     /// <summary>
     /// 로그인 아이디 (NULL 가능)
     /// </summary>
