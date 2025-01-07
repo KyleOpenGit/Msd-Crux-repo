@@ -16,7 +16,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSingleton<IUserRepo, UserRepoInMemory>();
-
+builder.Services.AddSingleton<IEmployeeRepo, EmployeeRepoInMemory>();
 var app = builder.Build();
 
 /*************************************************
