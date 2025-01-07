@@ -10,8 +10,7 @@ namespace MSD.Crux.API.Repositories.InMemory;
 public class UserRepoInMemory : IUserRepo
 {
     private readonly ConcurrentDictionary<int, User> _users = new();
-    private readonly ConcurrentDictionary<string, int> _employeeNumbers = new(); // EmployeeNumber → UserId 매핑
-    private int _nextId = 1;
+    private int _currentId = 0;
 
     /// <summary>
     /// ID(PK)를 기준으로 특정 유저를 조회.
@@ -42,13 +41,8 @@ public class UserRepoInMemory : IUserRepo
     /// <returns>조회된 유저 정보 또는 null</returns>
     public Task<User?> GetByEmployeeNumberAsync(string employeeNumber)
     {
-        if (_employeeNumbers.TryGetValue(employeeNumber, out int userId))
-        {
-            _users.TryGetValue(userId, out var user);
-            return Task.FromResult(user);
-        }
-
-        return Task.FromResult<User?>(null);
+        var user = _users.Values.FirstOrDefault(u => u.EmployeeNumber == employeeNumber);
+        return Task.FromResult(user);
     }
 
     /// <summary>
@@ -67,14 +61,15 @@ public class UserRepoInMemory : IUserRepo
     /// <returns>비동기 작업 완료</returns>
     public Task AddAsync(User user)
     {
-        user.Id = _nextId++;
-        _users[user.Id] = user;
+        ValidateUser(user);
+        user.Id = GenerateNewId();
 
-        if (!string.IsNullOrEmpty(user.EmployeeNumber))
+        if (_users.ContainsKey(user.Id))
         {
-            _employeeNumbers[user.EmployeeNumber] = user.Id;
+            throw new InvalidOperationException($"유저 ID {user.Id}는 이미 존재합니다.");
         }
 
+        _users[user.Id] = user;
         return Task.CompletedTask;
     }
 
@@ -85,16 +80,13 @@ public class UserRepoInMemory : IUserRepo
     /// <returns>비동기 작업 완료</returns>
     public Task UpdateAsync(User user)
     {
-        if (_users.ContainsKey(user.Id))
+        ValidateUser(user);
+        if (!_users.ContainsKey(user.Id))
         {
-            _users[user.Id] = user;
-
-            if (!string.IsNullOrEmpty(user.EmployeeNumber))
-            {
-                _employeeNumbers[user.EmployeeNumber] = user.Id;
-            }
+            throw new InvalidOperationException($"유저 ID {user.Id}는 존재하지 않습니다.");
         }
 
+        _users[user.Id] = user;
         return Task.CompletedTask;
     }
 
@@ -105,14 +97,49 @@ public class UserRepoInMemory : IUserRepo
     /// <returns>비동기 작업 완료</returns>
     public Task DeleteAsync(int id)
     {
-        if (_users.TryRemove(id, out var user))
+        if (!_users.TryRemove(id, out _))
         {
-            if (!string.IsNullOrEmpty(user.EmployeeNumber))
-            {
-                _employeeNumbers.TryRemove(user.EmployeeNumber, out _);
-            }
+            throw new InvalidOperationException($"유저 ID {id}는 존재하지 않습니다.");
         }
 
         return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// ID 자동 증가 메서드
+    /// </summary>
+    private int GenerateNewId()
+    {
+        return Interlocked.Increment(ref _currentId);
+    }
+
+    /// <summary>
+    /// User 객체가 DB 칼럼 조건에 맞는지 검증하고, 맞지 않다면 예외를 던진다.
+    /// </summary>
+    /// <param name="user">검증할 User 객체</param>
+    /// <exception cref="ArgumentException"></exception>
+    /// <exception cref="InvalidOperationException"></exception>
+    private void ValidateUser(User user)
+    {
+        // login_id, login_pw, salt 유효성 검사: 모두 NULL이거나 모두 NOT NULL이어야 함
+        bool allNull = string.IsNullOrEmpty(user.LoginId) && string.IsNullOrEmpty(user.LoginPw) && string.IsNullOrEmpty(user.Salt);
+        bool allNotNull = !string.IsNullOrEmpty(user.LoginId) && !string.IsNullOrEmpty(user.LoginPw) && !string.IsNullOrEmpty(user.Salt);
+
+        if (!allNull && !allNotNull)
+        {
+            throw new InvalidOperationException("LoginId, LoginPw, Salt는 모두 NULL이거나 모두 NOT NULL이어야 합니다.");
+        }
+
+        // Name이 비어 있으면 예외 발생
+        if (string.IsNullOrWhiteSpace(user.Name))
+        {
+            throw new ArgumentException("유저 이름은 필수입니다.", nameof(user.Name));
+        }
+
+        // EmployeeNumber가 비어 있으면 예외 발생
+        if (string.IsNullOrWhiteSpace(user.EmployeeNumber))
+        {
+            throw new ArgumentException("사원번호는 필수입니다.", nameof(user.EmployeeNumber));
+        }
     }
 }
