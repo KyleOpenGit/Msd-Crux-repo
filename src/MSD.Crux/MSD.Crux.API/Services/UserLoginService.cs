@@ -5,9 +5,8 @@ using MSD.Crux.API.Repositories;
 
 namespace MSD.Crux.API.Services;
 
-public class UserLoginService(IUserRepo _userRepo) : IUserLoginService
+public class UserLoginService(IUserRepo _userRepo, IEmployeeRepo _employeeRepo, IConfiguration _configuration) : IUserLoginService
 {
-
     /// <summary>
     /// 이미 등록된 User의 로그인 ID와 비밀번호를 등록.
     /// id,pw,salt 칼럼을 검사해서 이미 로그인ID/PW가 등록되어있는지 확인해서 등록이 안되어 있을 때만 등록한다.
@@ -46,6 +45,46 @@ public class UserLoginService(IUserRepo _userRepo) : IUserLoginService
         await _userRepo.UpdateAsync(user);
 
         return new UserLoginIdRegiRspDto { Id = user.Id, Name = user.Name, EmployeeNumber = user.EmployeeNumber };
+    }
+
+    /// <summary>
+    /// 로그인 정보를 검증 한 후 JWT 를 반환한다.
+    /// </summary>
+    /// <param name="loginId">유저 로그인 ID </param>
+    /// <param name="password">유저 로그인 PW </param>
+    /// <returns>로그인 성공한 유저 정보와 Jwt</returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    /// <exception cref="UnauthorizedAccessException"></exception>
+    public async Task<UserLoginRspDto> LoginAsync(string loginId, string password)
+    {
+        // User 테이블에서 로그인 ID로 사용자 조회
+        var user = await _userRepo.GetByLoginIdAsync(loginId);
+        if (user == null)
+        {
+            throw new InvalidOperationException("로그인 ID가 유효하지 않습니다.");
+        }
+
+        // 비밀번호 검증
+        if (!PwdHasher.VerifyHash(password, user.Salt, user.LoginPw))
+        {
+            throw new UnauthorizedAccessException("비밀번호가 유효하지 않습니다.");
+        }
+
+        var employee = await _employeeRepo.GetByEmployeeNumberAsync(user.EmployeeNumber);
+        string token = JwtHelper.GenerateToken(user, _configuration);
+
+        // 응답 DTO 생성
+        return new UserLoginRspDto
+        {
+            Id = user.Id,
+            LoginId = user.LoginId,
+            EmployeeNumber = user.EmployeeNumber,
+            Name = user.Name,
+            Photo = employee?.Photo ?? string.Empty,
+            Shift = employee?.Shift ?? string.Empty,
+            JwtToken = token,
+            JwtPublicKey = _configuration["Jwt:PublicKey"]
+        };
     }
 
     /// <summary>
