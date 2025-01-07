@@ -20,7 +20,7 @@ builder.Services.AddSingleton<IEmployeeRepo, EmployeeRepoInMemory>();
 builder.Services.AddSingleton<IUserRepo, UserRepoInMemory>();
 builder.Services.AddScoped<EmployeeService>();
 builder.Services.AddScoped<UserService>();
-
+builder.Services.AddScoped<IUserLoginService, UserLoginService>();
 var app = builder.Build();
 
 /*************************************************
