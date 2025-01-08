@@ -16,10 +16,10 @@ public static class GenericHelper
         return year * 1000000 + (int)gender * 10000 + sequence;
     }
 
-    public static string ConvertToSex(MillenniumGender gender)
-        => gender switch
-        {
-            MillenniumGender.Male or MillenniumGender.MMale => "남자",
-            MillenniumGender.Female or MillenniumGender.MFemale => "여자"
-        };
+    public static string ConvertToSex(MillenniumGender gender) => gender switch
+    {
+        MillenniumGender.Male or MillenniumGender.MMale => "남자",
+        MillenniumGender.Female or MillenniumGender.MFemale => "여자",
+        _ => throw new ArgumentOutOfRangeException(nameof(gender), $"예상치 못한 성별 코드: {gender}")
+    };
 }
