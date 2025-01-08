@@ -15,7 +15,6 @@ public class UserController(UserService _userService) : ControllerBase
     /// 새로운 유저 등록 == 시스템 사용 권한 승인
     /// </summary>
     /// <param name="reqBody">사용신청 직원 정보 및 신청하는 권한</param>
-    /// <returns></returns>
     [HttpPost]
     public async Task<IActionResult> RegisterUser([FromBody] UserRegiReqDto reqBody)
     {
@@ -33,7 +32,6 @@ public class UserController(UserService _userService) : ControllerBase
     /// <summary>
     /// 전체 유저 정보 조회
     /// </summary>
-    /// <returns></returns>
     [HttpGet]
     public async Task<IActionResult> GetAllUsers()
     {
@@ -41,12 +39,10 @@ public class UserController(UserService _userService) : ControllerBase
         return Ok(users);
     }
 
-
     /// <summary>
     /// User 레코드 ID로 유저 조회
     /// </summary>
     /// <param name="id">DB 레코드 id 칼럼 값</param>
-    /// <returns></returns>
     [HttpGet("by-id/{id:int}")]
     public async Task<IActionResult> GetUserById(int id)
     {
@@ -62,9 +58,6 @@ public class UserController(UserService _userService) : ControllerBase
     /// <summary>
     /// id에 해당하는 User 정보 수정
     /// </summary>
-    /// <param name="id"></param>
-    /// <param name="updateReqDto"></param>
-    /// <returns></returns>
     [HttpPut("by-id/{id:int}")]
     public async Task<IActionResult> UpdateUserById([FromRoute] int id, [FromBody] UserUpdateReqDto updateReqDto)
     {
@@ -87,11 +80,10 @@ public class UserController(UserService _userService) : ControllerBase
             return StatusCode(500, new { Message = ex.Message });
         }
     }
+
     /// <summary>
     /// 직원번호로 유저 조회
     /// </summary>
-    /// <param name="employeeNumber"></param>
-    /// <returns></returns>
     [HttpGet("by-number/{employeeNumber:int}")]
     public async Task<IActionResult> GetUserByEmployeeNumber(int employeeNumber)
     {
@@ -103,12 +95,10 @@ public class UserController(UserService _userService) : ControllerBase
 
         return Ok(userInfo);
     }
+
     /// <summary>
     /// 직원번호에 해당하는 User 정보 수정
     /// </summary>
-    /// <param name="employeeNumber"></param>
-    /// <param name="updateReqDto"></param>
-    /// <returns></returns>
     [HttpPut("by-number/{employeeNumber:int}")]
     public async Task<IActionResult> UpdateUserByEmployeeNumber([FromRoute] int employeeNumber, [FromBody] UserUpdateReqDto updateReqDto)
     {
@@ -132,9 +122,10 @@ public class UserController(UserService _userService) : ControllerBase
         }
     }
 
-
-
-
+    /// <summary>
+    ///  User 등록 및 권한 신청한 employee 목록
+    /// </summary>
+    /// <returns></returns>
     [HttpGet("applications")]
     public async Task<IActionResult> GetUserRoleApplications()
     {

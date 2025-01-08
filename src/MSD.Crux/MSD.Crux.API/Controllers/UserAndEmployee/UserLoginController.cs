@@ -11,8 +11,6 @@ public class UserLoginController(IUserLoginService _userLoginService) : Controll
     /// <summary>
     /// 유저 로그인
     /// </summary>
-    /// <param name="loginInput"></param>
-    /// <returns></returns>
     [HttpPost]
     public async Task<IActionResult> Login([FromBody] UserLoginReqDto loginInput)
     {
@@ -43,9 +41,8 @@ public class UserLoginController(IUserLoginService _userLoginService) : Controll
     /// <summary>
     /// 사원번호에 해당하는 User의 로그인 Id/Pw를 등록.
     /// </summary>
-    /// <param name="employeeNumber">사원벊</param>
+    /// <param name="employeeNumber">사원번호</param>
     /// <param name="reqBody">로그인 ID와 PW raw data</param>
-    /// <returns>응답메시지</returns>
     [HttpPut("create-id/{employeeNumber:int}")]
     public async Task<IActionResult> CreateLoginIdAsync([FromRoute] int employeeNumber, [FromBody] UserLoginRegiReqDto reqBody)
     {
