@@ -6,7 +6,7 @@ using MSD.Crux.API.Services;
 namespace MSD.Crux.API.Controllers;
 
 [ApiController]
-[Route("api/hr/employees")]
+[Route("api/employees")]
 public class EmployeeController(EmployeeService _employeeService) : ControllerBase
 {
     /// <summary>
@@ -71,20 +71,4 @@ public class EmployeeController(EmployeeService _employeeService) : ControllerBa
         }
     }
 
-    /// <summary>
-    /// 특정 직원 삭제
-    /// </summary>
-    [HttpDelete("{employeeNumber:int}")]
-    public async Task<IActionResult> DeleteEmployee(int employeeNumber)
-    {
-        try
-        {
-            await _employeeService.DeleteEmployeeAsync(employeeNumber);
-            return NoContent();
-        }
-        catch (InvalidOperationException ex)
-        {
-            return NotFound(ex.Message);
-        }
-    }
 }
