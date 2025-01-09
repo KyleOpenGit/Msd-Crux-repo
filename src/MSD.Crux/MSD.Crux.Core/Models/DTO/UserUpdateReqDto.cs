@@ -1,4 +1,4 @@
-namespace MSD.Crux.API.Models;
+namespace MSD.Crux.Core.Models;
 
 /// <summary>
 /// 유저 정보 업데이트 요청 DTO

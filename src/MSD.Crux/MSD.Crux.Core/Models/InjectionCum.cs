@@ -1,11 +1,11 @@
-namespace MSD.Crux.API.Models;
+namespace MSD.Crux.Core.Models;
 
 /// <summary>
-/// 엔티티 클래스 - DB의 vision_cum 테이블 매핑.
-/// AI Vision 검사 누적검사량 수집 시계열데이터.
+/// 엔티티 클래스 - DB의 injection_cum 테이블 매핑.
+/// 누적생산량 수집 시계열데이터.
 /// </summary>
 /// <remarks>line_id + time 복합키(PK)</remarks>
-public class VisionCum
+public class InjectionCum
 {
     /// <summary>
     /// 라인코드
@@ -29,7 +29,7 @@ public class VisionCum
     /// <remarks>employee 테이블의 year + gender + sequence</remarks>
     public string? EmployeeNumber { get; set; }
     /// <summary>
-    /// 누적 검사량
+    /// 누적 생산량
     /// </summary>
     public int Total { get; set; }
 }

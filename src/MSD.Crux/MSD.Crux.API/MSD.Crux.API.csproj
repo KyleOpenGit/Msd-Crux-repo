@@ -19,4 +19,8 @@
     <ProjectReference Include="..\MSD.Crux.Core\MSD.Crux.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Remove="Models\DTO\UserLoginReqDto.cs" />
+  </ItemGroup>
+
 </Project>

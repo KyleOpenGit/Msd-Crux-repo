@@ -1,4 +1,4 @@
-using MSD.Crux.API.Models;
+using MSD.Crux.Core.Models;
 
 namespace MSD.Crux.API.Helpers;
 

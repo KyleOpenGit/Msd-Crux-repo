@@ -1,4 +1,4 @@
-namespace MSD.Crux.API.Models;
+namespace MSD.Crux.Core.Models;
 
 /// <summary>
 /// 편의성을 높인 직원정보 객체 DTO.

@@ -1,5 +1,5 @@
 
-namespace MSD.Crux.API.Models.DTO;
+namespace MSD.Crux.Core.Models;
 
 /// <summary>
 ///

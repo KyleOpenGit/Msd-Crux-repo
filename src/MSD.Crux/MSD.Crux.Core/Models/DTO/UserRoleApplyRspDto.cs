@@ -1,4 +1,4 @@
-namespace MSD.Crux.API.Models;
+namespace MSD.Crux.Core.Models;
 
 /// <summary>
 /// User 등록 및 권한 신청 목록 조회 Dto.

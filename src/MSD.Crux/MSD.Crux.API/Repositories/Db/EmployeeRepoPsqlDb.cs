@@ -1,7 +1,7 @@
 using System.Data;
 using Dapper;
 using MSD.Crux.API.Helpers;
-using MSD.Crux.API.Models;
+using MSD.Crux.Core.Models;
 
 namespace MSD.Crux.API.Repositories.PsqlDb;
 

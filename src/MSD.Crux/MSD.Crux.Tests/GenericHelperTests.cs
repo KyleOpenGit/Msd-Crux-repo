@@ -1,5 +1,5 @@
 using MSD.Crux.API.Helpers;
-using MSD.Crux.API.Models;
+using MSD.Crux.Core.Models;
 using NUnit.Framework;
 
 namespace MSD.Crux.Tests.Helpers
