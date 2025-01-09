@@ -7,6 +7,7 @@
     </PropertyGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\MSD.Crux.API\MSD.Crux.API.csproj" />
       <ProjectReference Include="..\MSD.Crux.Core\MSD.Crux.Core.csproj" />
     </ItemGroup>
 
