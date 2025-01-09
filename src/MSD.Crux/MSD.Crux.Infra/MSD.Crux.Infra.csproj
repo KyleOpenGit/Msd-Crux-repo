@@ -6,4 +6,8 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\MSD.Crux.Core\MSD.Crux.Core.csproj" />
+    </ItemGroup>
+
 </Project>
