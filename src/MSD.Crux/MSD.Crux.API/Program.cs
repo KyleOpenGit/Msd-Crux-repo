@@ -11,8 +11,9 @@ using MSD.Crux.API.Repositories.InMemory;
 using MSD.Crux.API.Repositories.Psql;
 using MSD.Crux.API.Repositories.PsqlDb;
 using MSD.Crux.API.Services;
+using MSD.Crux.Core.Repositories;
+using MSD.Crux.Core.Services;
 using Npgsql;
-
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -35,20 +36,23 @@ builder.Services.AddScoped<EmployeeService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<IUserLoginService, UserLoginService>();
 // JWT 인증 설정
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-       .AddJwtBearer(options =>
-        {
-            options.TokenValidationParameters = new TokenValidationParameters
-            {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidateLifetime = true,
-                ValidateIssuerSigningKey = true,
-                ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                ValidAudience = builder.Configuration["Jwt:Audience"],
-                IssuerSigningKey = JwtHelper.GetPublicKey(builder.Configuration)
-            };
-        });
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
+                                                                                        {
+                                                                                            options.TokenValidationParameters = new TokenValidationParameters
+                                                                                            {
+                                                                                                ValidateIssuer = true,
+                                                                                                ValidateAudience = true,
+                                                                                                ValidateLifetime = true,
+                                                                                                ValidateIssuerSigningKey = true,
+                                                                                                ValidIssuer =
+                                                                                                                                        builder.Configuration["Jwt:Issuer"],
+                                                                                                ValidAudience =
+                                                                                                                                        builder.Configuration["Jwt:Audience"],
+                                                                                                IssuerSigningKey =
+                                                                                                                                        JwtHelper
+                                                                                                                                            .GetPublicKey(builder.Configuration)
+                                                                                            };
+                                                                                        });
 
 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 

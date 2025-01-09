@@ -1,4 +1,4 @@
-namespace MSD.Crux.API.Models;
+namespace MSD.Crux.Core.Models;
 
 /// <summary>
 /// Employee 엔티티 클래스 - DB의 employee 테이블 매핑.

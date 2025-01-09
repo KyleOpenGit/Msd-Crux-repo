@@ -1,7 +1,5 @@
-// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
 
-namespace MSD.Crux.API.Models;
+namespace MSD.Crux.Core.Models;
 
 /// <summary>
 /// 유저 등록에대한 응답 DTO. 부여된 레코드 id를 포함한다.

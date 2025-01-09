@@ -1,4 +1,4 @@
-namespace MSD.Crux.API.Models;
+namespace MSD.Crux.Core.Models;
 
 /// <summary>
 /// 새로운 유저 등록 및 권한 승인 요청 DTO

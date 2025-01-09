@@ -1,5 +1,5 @@
 
-namespace MSD.Crux.API.Models.DTO;
+namespace MSD.Crux.Core.Models;
 
 /// <summary>
 /// 이미 등록된 User의 login_id, login_pw  등록요청 DTO 클래스

@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace MSD.Crux.API.Models.DTO;
+namespace MSD.Crux.Core.Models;
 
 /// <summary>
 /// 로그인 요청 DTO

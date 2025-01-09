@@ -1,6 +1,6 @@
-using MSD.Crux.API.Models.DTO;
+using MSD.Crux.Core.Models;
 
-namespace MSD.Crux.API.Services;
+namespace MSD.Crux.Core.Services;
 
 /// <summary>
 /// 유저 로그인 ID/PW 생성과  로그인시 JWT 발급 관련 서비스 인터페이스

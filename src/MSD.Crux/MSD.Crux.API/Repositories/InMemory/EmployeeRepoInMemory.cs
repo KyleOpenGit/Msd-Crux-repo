@@ -1,6 +1,7 @@
 using System.Collections.Concurrent;
 using MSD.Crux.API.Helpers;
-using MSD.Crux.API.Models;
+using MSD.Crux.Core.Models;
+using MSD.Crux.Core.Repositories;
 
 namespace MSD.Crux.API.Repositories.InMemory;
 
