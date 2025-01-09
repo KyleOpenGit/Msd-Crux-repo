@@ -1,6 +1,6 @@
 using MSD.Crux.Core.Models;
 
-namespace MSD.Crux.Core.Repositories;
+namespace MSD.Crux.Core.IRepositories;
 
 /// <summary>
 /// User 테이블에 대한 레포지토리 인터페이스

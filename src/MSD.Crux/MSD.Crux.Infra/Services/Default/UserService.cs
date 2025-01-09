@@ -1,7 +1,7 @@
 using MSD.Crux.Core.Helpers;
+using MSD.Crux.Core.IRepositories;
+using MSD.Crux.Core.IServices;
 using MSD.Crux.Core.Models;
-using MSD.Crux.Core.Repositories;
-using MSD.Crux.Core.Services;
 
 namespace MSD.Crux.Infra.Services;
 

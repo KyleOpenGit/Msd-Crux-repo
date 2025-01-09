@@ -1,6 +1,6 @@
 using MSD.Crux.Core.Models;
 
-namespace MSD.Crux.Core.Services;
+namespace MSD.Crux.Core.IServices;
 
 /// <summary>
 ///  직원 등록 및 권한 신청 비즈니스 (디폴트) 로직 서비스에대한 계약

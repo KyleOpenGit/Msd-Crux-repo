@@ -1,7 +1,7 @@
 using System.Data;
 using Dapper;
+using MSD.Crux.Core.IRepositories;
 using MSD.Crux.Core.Models;
-using MSD.Crux.Core.Repositories;
 
 namespace MSD.Crux.Infra.Repositories;
 

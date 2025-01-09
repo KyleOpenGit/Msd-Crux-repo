@@ -1,6 +1,6 @@
 using MSD.Crux.Core.Models;
 
-namespace MSD.Crux.Core.Services;
+namespace MSD.Crux.Core.IServices;
 
 /// <summary>
 /// user 등록과 정보수정, 검색 로직에대한 계약

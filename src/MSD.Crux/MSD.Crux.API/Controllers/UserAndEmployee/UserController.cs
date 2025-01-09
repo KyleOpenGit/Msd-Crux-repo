@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
+using MSD.Crux.Core.IServices;
 using MSD.Crux.Core.Models;
-using MSD.Crux.Core.Services;
 
 namespace MSD.Crux.API.Controllers;
 
