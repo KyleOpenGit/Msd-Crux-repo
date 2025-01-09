@@ -1,6 +1,7 @@
 using MSD.Crux.API.Helpers;
-using MSD.Crux.API.Repositories;
 using MSD.Crux.Core.Models;
+using MSD.Crux.Core.Repositories;
+using MSD.Crux.Core.Services;
 
 namespace MSD.Crux.API.Services;
 
