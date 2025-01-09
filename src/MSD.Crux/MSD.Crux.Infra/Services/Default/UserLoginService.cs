@@ -1,9 +1,10 @@
+using Microsoft.Extensions.Configuration;
 using MSD.Crux.API.Helpers;
 using MSD.Crux.Core.Models;
 using MSD.Crux.Core.Repositories;
 using MSD.Crux.Core.Services;
 
-namespace MSD.Crux.API.Services;
+namespace MSD.Crux.Infra.Services;
 
 public class UserLoginService(IUserRepo _userRepo, IEmployeeRepo _employeeRepo, IConfiguration _configuration) : IUserLoginService
 {

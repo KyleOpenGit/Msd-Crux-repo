@@ -3,7 +3,7 @@ using MSD.Crux.API.Helpers;
 using MSD.Crux.Core.Models;
 using MSD.Crux.Core.Repositories;
 
-namespace MSD.Crux.API.Repositories.InMemory;
+namespace MSD.Crux.Infra.Repositories;
 
 /// <summary>
 /// Employee 테이블 In-Memory 레포지토리 구현체

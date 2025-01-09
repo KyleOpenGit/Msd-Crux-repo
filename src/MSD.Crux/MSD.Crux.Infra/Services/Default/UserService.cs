@@ -1,8 +1,9 @@
 using MSD.Crux.API.Helpers;
 using MSD.Crux.Core.Models;
 using MSD.Crux.Core.Repositories;
+using MSD.Crux.Core.Services;
 
-namespace MSD.Crux.Core.Services;
+namespace MSD.Crux.Infra.Services;
 
 /// <summary>
 /// ISuerService 디폴트 구현체.

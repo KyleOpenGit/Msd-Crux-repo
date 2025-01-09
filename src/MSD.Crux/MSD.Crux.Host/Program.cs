@@ -4,8 +4,8 @@ using Microsoft.IdentityModel.Tokens;
 using MSD.Crux.API.Helpers;
 using MSD.Crux.Core.Repositories;
 using MSD.Crux.Core.Services;
-// using MSD.Crux.Infra.Repositories;
-// using MSD.Crux.Infra.Services;
+using MSD.Crux.Infra.Repositories;
+using MSD.Crux.Infra.Services;
 using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,11 +22,11 @@ builder.Services.AddTransient<IDbConnection>(sp =>
                                              });
 
 // DI: Core 인터페이스 ↔ Infra 구현체 등록
-// builder.Services.AddScoped<IEmployeeRepo, EmployeeRepoPsqlDb>();
-// builder.Services.AddScoped<IUserRepo, UserRepoPsqlDb>();
-// builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+builder.Services.AddScoped<IEmployeeRepo, EmployeeRepoPsqlDb>();
+builder.Services.AddScoped<IUserRepo, UserRepoPsqlDb>();
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IUserService, UserService>();
-// builder.Services.AddScoped<IUserLoginService, UserLoginService>();
+builder.Services.AddScoped<IUserLoginService, UserLoginService>();
 
 // JWT 인증 설정
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>

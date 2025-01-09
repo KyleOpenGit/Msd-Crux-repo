@@ -4,7 +4,7 @@ using MSD.Crux.API.Helpers;
 using MSD.Crux.Core.Models;
 using MSD.Crux.Core.Repositories;
 
-namespace MSD.Crux.API.Repositories.PsqlDb;
+namespace MSD.Crux.Infra.Repositories;
 
 /// <summary>
 /// Employee 테이블 PostgreSQL 레포지토리 구현체

@@ -3,7 +3,7 @@ using MSD.Crux.Core.Models;
 using MSD.Crux.Core.Repositories;
 using MSD.Crux.Core.Services;
 
-namespace MSD.Crux.API.Services;
+namespace MSD.Crux.Infra.Services;
 
 /// <summary>
 /// 직원 등록 및 권한 신청 비즈니스 (디폴트) 로직 서비스.

@@ -2,7 +2,7 @@ using System.Collections.Concurrent;
 using MSD.Crux.Core.Models;
 using MSD.Crux.Core.Repositories;
 
-namespace MSD.Crux.API.Repositories.InMemory;
+namespace MSD.Crux.Infra.Repositories;
 
 /// <summary>
 /// User 테이블 인-메모리 레포지토리 구현체

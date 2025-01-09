@@ -3,7 +3,7 @@ using Dapper;
 using MSD.Crux.Core.Models;
 using MSD.Crux.Core.Repositories;
 
-namespace MSD.Crux.API.Repositories.Psql;
+namespace MSD.Crux.Infra.Repositories;
 
 /// <summary>
 /// User 테이블 PostgreSQL 레포지토리 구현체
