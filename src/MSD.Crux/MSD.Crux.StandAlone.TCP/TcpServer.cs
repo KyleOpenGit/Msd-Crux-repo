@@ -42,7 +42,7 @@ public class TcpServer : BackgroundService
             var user = await _userRepo.GetByIdAsync(userId); // ID가 1인 유저를 가져옴
             if (user != null)
             {
-                _logger.LogInformation($"Test User Retrieved: ID={user.Id}, Name={user.Name}");
+                _logger.LogInformation($"테스트 유저: ID={user.Id}, Name={user.Name}");
             }
             else
             {

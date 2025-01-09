@@ -12,7 +12,7 @@
             "commandName": "Project",
             "dotnetRunMessages": true,
             "environmentVariables": {
-                "ASPNETCORE_ENVIRONMENT": "Production"
+                "ASPNETCORE_ENVIRONMENT": "Local"
             }
         }
     }
