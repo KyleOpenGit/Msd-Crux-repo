@@ -1,6 +1,6 @@
-using NUnit.Framework;
 using MSD.Crux.API.Helpers;
 using MSD.Crux.API.Models;
+using NUnit.Framework;
 
 namespace MSD.Crux.Tests.Helpers
 {
