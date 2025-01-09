@@ -1,7 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 
-namespace MSD.Crux.API.Helpers;
+namespace MSD.Crux.Core.Helpers;
 
 /// <summary>
 /// 비밀번호를 해싱하고 검증하는 헬퍼 클래스

@@ -1,6 +1,6 @@
 using MSD.Crux.Core.Models;
 
-namespace MSD.Crux.API.Helpers;
+namespace MSD.Crux.Core.Helpers;
 
 public static class GenericHelper
 {

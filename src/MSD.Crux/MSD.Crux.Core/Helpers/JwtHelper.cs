@@ -1,10 +1,11 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using MSD.Crux.Core.Models;
 
-namespace MSD.Crux.API.Helpers
+namespace MSD.Crux.Core.Helpers
 {
     /// <summary>
     /// JWT 생성 도우미 클래스

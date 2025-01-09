@@ -1,6 +1,6 @@
 using System.Data;
 using Dapper;
-using MSD.Crux.API.Helpers;
+using MSD.Crux.Core.Helpers;
 using MSD.Crux.Core.Models;
 using MSD.Crux.Core.Repositories;
 

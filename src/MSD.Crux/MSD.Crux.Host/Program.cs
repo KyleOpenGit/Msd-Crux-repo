@@ -6,6 +6,7 @@ using System.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using MSD.Crux.API.Helpers;
+using MSD.Crux.Core.Helpers;
 using MSD.Crux.Core.Repositories;
 using MSD.Crux.Core.Services;
 using MSD.Crux.Infra.Repositories;
