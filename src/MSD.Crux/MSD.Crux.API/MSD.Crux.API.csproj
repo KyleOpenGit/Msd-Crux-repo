@@ -16,6 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\MSD.Crux.Common\MSD.Crux.Common.csproj" />
     <ProjectReference Include="..\MSD.Crux.Core\MSD.Crux.Core.csproj" />
   </ItemGroup>
 
