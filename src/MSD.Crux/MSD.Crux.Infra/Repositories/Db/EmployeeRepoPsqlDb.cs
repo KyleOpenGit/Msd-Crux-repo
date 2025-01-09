@@ -31,8 +31,15 @@ public class EmployeeRepoPsqlDb : IEmployeeRepo
 
     public async Task<Employee?> GetByEmployeeNumberAsync(int employeeNumber)
     {
-        const string query = "SELECT * FROM employee WHERE (year * 1000000 + gender * 10000 + sequence) = @EmployeeNumber";
-        return await _dbConnection.QueryFirstOrDefaultAsync<Employee>(query, new { EmployeeNumber = employeeNumber });
+        const string query = @" SELECT * FROM employee
+                                WHERE (year = @Year AND gender = @Gender AND sequence = @Sequence)";
+
+        // Employee Number를 Year, Gender, Sequence로 분해
+        var year = employeeNumber / 1_000_00;
+        var gender = (employeeNumber / 100_00) % 10;
+        var sequence = employeeNumber % 100_00;
+
+        return await _dbConnection.QueryFirstOrDefaultAsync<Employee>(query, new { Year = year, Gender = gender, Sequence = sequence });
     }
 
     public async Task<IEnumerable<Employee>> GetAllAsync()
