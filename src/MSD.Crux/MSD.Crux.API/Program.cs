@@ -32,8 +32,8 @@ builder.Services.AddTransient<IDbConnection>(sp =>
                                              });
 builder.Services.AddTransient<IEmployeeRepo, EmployeeRepoPsqlDb>();
 builder.Services.AddTransient<IUserRepo, UserRepoPsqlDb>();
-builder.Services.AddScoped<EmployeeService>();
-builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserLoginService, UserLoginService>();
 // JWT 인증 설정
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
@@ -44,13 +44,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
                                                                                                 ValidateAudience = true,
                                                                                                 ValidateLifetime = true,
                                                                                                 ValidateIssuerSigningKey = true,
-                                                                                                ValidIssuer =
-                                                                                                                                        builder.Configuration["Jwt:Issuer"],
-                                                                                                ValidAudience =
-                                                                                                                                        builder.Configuration["Jwt:Audience"],
-                                                                                                IssuerSigningKey =
-                                                                                                                                        JwtHelper
-                                                                                                                                            .GetPublicKey(builder.Configuration)
+                                                                                                ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                                                                                                ValidAudience = builder.Configuration["Jwt:Audience"],
+                                                                                                IssuerSigningKey = JwtHelper.GetPublicKey(builder.Configuration)
                                                                                             };
                                                                                         });
 

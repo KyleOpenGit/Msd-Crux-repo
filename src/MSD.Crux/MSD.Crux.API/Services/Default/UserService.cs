@@ -2,9 +2,15 @@ using MSD.Crux.API.Helpers;
 using MSD.Crux.Core.Models;
 using MSD.Crux.Core.Repositories;
 
-namespace MSD.Crux.API.Services;
+namespace MSD.Crux.Core.Services;
 
-public class UserService(IUserRepo _userRepo, IEmployeeRepo _employeeRepo)
+/// <summary>
+/// ISuerService 디폴트 구현체.
+/// user 등록과 정보수정, 검색 로직
+/// </summary>
+/// <param name="_userRepo">DI로 주입되는 user 레포지토리</param>
+/// <param name="_employeeRepo">DI로 주입되는 employee 레포지토리</param>
+public class UserService(IUserRepo _userRepo, IEmployeeRepo _employeeRepo) : IUserService
 {
     public async Task<UserRegiRspDto> RegisterUserAsync(UserRegiReqDto request)
     {
@@ -98,6 +104,12 @@ public class UserService(IUserRepo _userRepo, IEmployeeRepo _employeeRepo)
         });
     }
 
+    /// <summary>
+    /// user 레코드를 수정한다.
+    /// 단, ID/PW 초기화 요청이 포함된다면 LoginId, LoginPw, Salt는 세개가 모두 정보가 있거나 모두 정보가 없어야만 수정가능.
+    /// </summary>
+    /// <param name="user">변경될 user 객체 소스</param>
+    /// <param name="updateReqDto">직원이름, 권한, ID/PW 초기화 신청 여부</param>
     private static void ApplyUserUpdates(User user, UserUpdateReqDto updateReqDto)
     {
         // ResetLoginCredentials가 true이면 로그인 정보 초기화

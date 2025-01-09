@@ -1,13 +1,15 @@
 using MSD.Crux.API.Helpers;
 using MSD.Crux.Core.Models;
 using MSD.Crux.Core.Repositories;
+using MSD.Crux.Core.Services;
 
 namespace MSD.Crux.API.Services;
 
 /// <summary>
-/// 직원 등록 및 권한 신청 비즈니스 로직 서비스
+/// 직원 등록 및 권한 신청 비즈니스 (디폴트) 로직 서비스.
+/// IEmployeeService 인터페이스 디폴트 구현체
 /// </summary>
-public class EmployeeService(IEmployeeRepo _employeeRepo)
+public class EmployeeService(IEmployeeRepo _employeeRepo) : IEmployeeService
 {
     /// <summary>
     /// 새로운 직원 등록
@@ -45,8 +47,10 @@ public class EmployeeService(IEmployeeRepo _employeeRepo)
     }
 
     /// <summary>
-    /// 특정 직원 조회
+    /// 직원정보로 특정 직원 조회
     /// </summary>
+    /// <param name="employeeNumber">직원번호</param>
+    /// <returns>employee 테이블에대한 엔티티 모델 객체</returns>
     public async Task<Employee?> GetEmployeeByNumberAsync(int employeeNumber)
     {
         return await _employeeRepo.GetByEmployeeNumberAsync(employeeNumber);
@@ -55,14 +59,16 @@ public class EmployeeService(IEmployeeRepo _employeeRepo)
     /// <summary>
     /// 직원 정보 업데이트 및 유저 권한 신청
     /// </summary>
+    /// <param name="employee">employee 테이블에대한 엔티티 모델 객체<</param>
     public async Task UpdateEmployeeAsync(Employee employee)
     {
         await _employeeRepo.UpdateAsync(employee);
     }
 
     /// <summary>
-    /// 특정 직원 삭제
+    /// 직원번호로 특정 직원 찾아서 삭제
     /// </summary>
+    /// <param name="employeeNumber">직원번호</param>
     public async Task DeleteEmployeeAsync(int employeeNumber)
     {
         await _employeeRepo.DeleteAsync(employeeNumber);

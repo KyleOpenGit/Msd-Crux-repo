@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using MSD.Crux.API.Services;
 using MSD.Crux.Core.Models;
+using MSD.Crux.Core.Services;
 
 namespace MSD.Crux.API.Controllers;
 
@@ -9,7 +9,7 @@ namespace MSD.Crux.API.Controllers;
 /// </summary>
 [ApiController]
 [Route("api/users")]
-public class UserController(UserService _userService) : ControllerBase
+public class UserController(IUserService _userService) : ControllerBase
 {
     /// <summary>
     /// 새로운 유저 등록 == 시스템 사용 권한 승인
