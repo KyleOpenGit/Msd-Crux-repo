@@ -19,7 +19,7 @@ namespace MSD.Crux.Tests.Helpers
             int result = GenericHelper.ConvertToEmployeeNumber(year, gender, sequence);
 
             // Assert
-            Assert.That(result, Is.EqualTo(20254005), "Employee Number가 예상 값과 다릅니다.");
+            Assert.That(result, Is.EqualTo(202520005), "Employee Number가 예상 값과 다릅니다.");
         }
     }
 }
