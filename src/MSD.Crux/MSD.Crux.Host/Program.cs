@@ -1,3 +1,7 @@
+/*******************
+ * Web Host Builder
+ *******************/
+
 using System.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
@@ -17,17 +21,15 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddTransient<IDbConnection>(sp =>
                                              {
+                                                 //appsettings json 에 작성된 커넥션 스트링으로 NpgsqlConnection 인스턴스 생성해서 IDbConnection 객체를 만든다.
                                                  string? connectionString = builder.Configuration.GetConnectionString("Postgres");
                                                  return new NpgsqlConnection(connectionString);
                                              });
-
-// DI: Core 인터페이스 ↔ Infra 구현체 등록
-builder.Services.AddScoped<IEmployeeRepo, EmployeeRepoPsqlDb>();
-builder.Services.AddScoped<IUserRepo, UserRepoPsqlDb>();
+builder.Services.AddTransient<IEmployeeRepo, EmployeeRepoPsqlDb>();
+builder.Services.AddTransient<IUserRepo, UserRepoPsqlDb>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserLoginService, UserLoginService>();
-
 // JWT 인증 설정
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
                                                                                         {
@@ -37,13 +39,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
                                                                                                 ValidateAudience = true,
                                                                                                 ValidateLifetime = true,
                                                                                                 ValidateIssuerSigningKey = true,
-                                                                                                ValidIssuer =
-                                                                                                                                        builder.Configuration["Jwt:Issuer"],
-                                                                                                ValidAudience =
-                                                                                                                                        builder.Configuration["Jwt:Audience"],
-                                                                                                IssuerSigningKey =
-                                                                                                                                        JwtHelper
-                                                                                                                                            .GetPublicKey(builder.Configuration)
+                                                                                                ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                                                                                                ValidAudience = builder.Configuration["Jwt:Audience"],
+                                                                                                IssuerSigningKey = JwtHelper.GetPublicKey(builder.Configuration)
                                                                                             };
                                                                                         });
 
@@ -51,16 +49,23 @@ Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 
 var app = builder.Build();
 
-/* HTTP request pipeline **********************/
-if (app.Environment.IsDevelopment())
+
+/*************************************************
+ * HTTP request 파이프라인에 미들웨어 추가 및 설정
+ *************************************************/
+if (app.Environment.IsDevelopment() || app.Environment.IsLocal())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
-app.UseAuthentication();
-app.UseAuthorization();
+// app.UseAuthentication();
+// app.UseAuthorization();
 
 app.MapControllers();
+
+/***************
+ * Run the host
+ **************/
 app.Run();
