@@ -13,7 +13,7 @@ public static class GenericHelper
     /// <returns>조합된 Employee Number: 연도(4자리) + 성별(1자리) + 순번(4자리)</returns>
     public static int ConvertToEmployeeNumber(short year, MillenniumGender gender, short sequence)
     {
-        return year * 1000000 + (int)gender * 10000 + sequence;
+        return year * 1_000_00 + (int)gender * 100_00 + sequence;
     }
 
     public static string ConvertToSex(MillenniumGender gender) => gender switch
