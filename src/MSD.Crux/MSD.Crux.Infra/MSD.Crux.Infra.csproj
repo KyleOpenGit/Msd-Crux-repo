@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\MSD.Crux.Core\MSD.Crux.Core.csproj" />
+      <ProjectReference Include="..\MSD.Crux.Common\MSD.Crux.Common.csproj"/>
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Dapper" Version="2.1.35" />
+      <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.0" />
+    </ItemGroup>
+
+</Project>

@@ -1,13 +1,13 @@
 using Microsoft.AspNetCore.Mvc;
 using MSD.Crux.API.Helpers;
-using MSD.Crux.API.Models;
-using MSD.Crux.API.Services;
+using MSD.Crux.Core.IServices;
+using MSD.Crux.Core.Models;
 
 namespace MSD.Crux.API.Controllers;
 
 [ApiController]
 [Route("api/employees")]
-public class EmployeeController(EmployeeService _employeeService) : ControllerBase
+public class EmployeeController(IEmployeeService _employeeService) : ControllerBase
 {
     /// <summary>
     /// 새로운 직원 등록
