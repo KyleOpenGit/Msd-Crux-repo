@@ -4,9 +4,8 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <PackAsTool>true</PackAsTool> <!-- Global Tool로 설정 -->
-    <ToolCommandName>msd-dev-tool</ToolCommandName> <!-- CLI 명령어 이름 -->
     <Nullable>enable</Nullable>
+    <AssemblyName>msd-dev-tool</AssemblyName> <!-- 실행 파일 이름 -->
   </PropertyGroup>
 
   <ItemGroup>
