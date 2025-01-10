@@ -1,4 +1,6 @@
 ﻿using System.CommandLine;
+using Spectre.Console;
+
 namespace MSD.DevTool;
 
 class Program
