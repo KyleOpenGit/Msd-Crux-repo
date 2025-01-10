@@ -1,5 +1,4 @@
-﻿using System.CommandLine;
-using System.Data;
+﻿using System.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -9,9 +8,9 @@ namespace MSD.DevTool;
 
 class Program
 {
-    public static string? ConnectionString { get; private set; }
+    private static string ConnectionString { get; set; } = "Host=localhost;Port=5432;Username=myuser;Password=mypass;Database=mydb";
 
-    static async Task Main(string[] args)
+    static void Main(string[] args)
     {
         // 제네릭 호스트 생성 및 구성
         var host = Host.CreateDefaultBuilder(args).ConfigureServices((hostContext, services) =>
@@ -27,29 +26,28 @@ class Program
                                                                                                                   return new NpgsqlConnection(connectionString);
                                                                                                               });
 
-                                                                         // DI 컨테이너에 서비스 등록 (예시)
-                                                                         services.AddScoped<SomeService>();
+                                                                         // DI 컨테이너에 서비스 등록
+                                                                         services.AddScoped<ExampleService>();
                                                                      }).Build();
-        // DI 테스트: SomeService 사용
+        // DI 테스트: ExampleService 사용
         using IServiceScope? scope = host.Services.CreateScope();
-        var someService = scope.ServiceProvider.GetRequiredService<SomeService>();
+        var someService = scope.ServiceProvider.GetRequiredService<ExampleService>();
         someService.Run();
-
-        Console.WriteLine("[INFO] Host execution completed.");
     }
 }
 
-public class SomeService
+public class ExampleService
 {
     private readonly IDbConnection _dbConnection;
 
-    public SomeService(IDbConnection dbConnection)
+    public ExampleService(IDbConnection dbConnection)
     {
         _dbConnection = dbConnection;
     }
 
     public void Run()
     {
+        //DI 주입된 IDbConnection 테스트
         Console.WriteLine($"[INFO] Service running with DB connection: {_dbConnection.ConnectionString}");
     }
 }
