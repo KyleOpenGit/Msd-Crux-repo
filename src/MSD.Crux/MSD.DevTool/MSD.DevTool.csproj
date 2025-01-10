@@ -13,4 +13,9 @@
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MSD.Crux.Common\MSD.Crux.Common.csproj" />
+    <ProjectReference Include="..\MSD.Crux.Core\MSD.Crux.Core.csproj" />
+  </ItemGroup>
+
 </Project>
