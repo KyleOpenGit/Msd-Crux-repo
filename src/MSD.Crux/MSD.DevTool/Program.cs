@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System.CommandLine;
+using System.Data;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -8,10 +9,29 @@ namespace MSD.DevTool;
 
 class Program
 {
-    private static string ConnectionString { get; set; } = "Host=localhost;Port=5432;Username=myuser;Password=mypass;Database=mydb";
+    private static string? ConnectionString { get; set; }
 
-    static void Main(string[] args)
+    static async Task Main(string[] args)
     {
+        // CLI 명령어 정의
+        var rootCommand = new RootCommand("MSD.DevTool CLI Tool") { new Option<string>("--connection-string", "Database connection string") };
+
+        rootCommand.SetHandler((string connectionString) =>
+                               {
+                                   if (string.IsNullOrWhiteSpace(connectionString))
+                                   {
+                                       Console.WriteLine("[ERROR] Connection string is required. Use --connection-string to provide it.");
+                                       Environment.Exit(1);
+                                   }
+
+                                   ConnectionString = connectionString;
+                               },
+                               rootCommand.Children.OfType<Option<string>>().First());
+
+        // CLI 명령어 실행
+        await rootCommand.InvokeAsync(args);
+
+
         // 제네릭 호스트 생성 및 구성
         var host = Host.CreateDefaultBuilder(args).ConfigureServices((hostContext, services) =>
                                                                      {
