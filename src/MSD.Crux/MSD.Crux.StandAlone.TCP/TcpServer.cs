@@ -1,5 +1,6 @@
 using System.Net;
 using System.Net.Sockets;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MSD.Crux.Core.IRepositories;
@@ -15,6 +16,7 @@ public class TcpServer : BackgroundService
     private readonly int _port;
     private readonly ILogger<TcpServer> _logger;
     private readonly IUserRepo _userRepo;
+    private readonly IConfiguration _configuration;
 
     /// <summary>
     /// 생성자. 객체 생성시 DIC 에 등록된 객체들이 매개변수를 통해 주입된다.
@@ -22,11 +24,12 @@ public class TcpServer : BackgroundService
     /// <param name="port">DI로 주입되는 포트 넘버</param>
     /// <param name="logger">DI로 주입되는 ILogger 구현체 객체</param>
     /// <param name="userRepo">DI로 주입되는 MSD.Crux.Core 레포지토리 인터페이스를 구현한 객체(MSD.Crux.Infra.UserRepoPsqlDb)</param>
-    public TcpServer(int port, ILogger<TcpServer> logger, IUserRepo userRepo)
+    public TcpServer(int port, ILogger<TcpServer> logger, IUserRepo userRepo, IConfiguration configuration)
     {
         _port = port;
         _logger = logger;
         _userRepo = userRepo;
+        _configuration = configuration;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
