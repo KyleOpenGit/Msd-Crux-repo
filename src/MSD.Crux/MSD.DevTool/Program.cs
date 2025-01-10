@@ -1,4 +1,5 @@
-﻿namespace MSD.DevTool;
+﻿using System.CommandLine;
+namespace MSD.DevTool;
 
 class Program
 {
