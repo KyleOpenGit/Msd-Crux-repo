@@ -25,12 +25,15 @@ IHost? host = Host.CreateDefaultBuilder(args)
                   // DI Container 설정
                   .ConfigureServices((hostContext, services) =>
                                      {
+                                         IConfiguration configuration = hostContext.Configuration;
                                          // 커스텀 TCP 소켓 서버 클래스 등록
-                                         services.AddHostedService(sp => new TcpServer(51900, sp.GetRequiredService<ILogger<TcpServer>>(), sp.GetRequiredService<IUserRepo>()));
+                                         services.AddHostedService(sp => new TcpServer(51900, sp.GetRequiredService<ILogger<TcpServer>>(),
+                                                                                       sp.GetRequiredService<IUserRepo>(),
+                                                                                       configuration: configuration));
                                          // Npgsql을 이용한 Db 커넥션
                                          services.AddTransient<IDbConnection>(sp =>
                                                                               {
-                                                                                  string? connectionString = hostContext.Configuration.GetConnectionString("Postgres");
+                                                                                  string? connectionString = configuration.GetConnectionString("Postgres");
                                                                                   return new NpgsqlConnection(connectionString);
                                                                               });
                                          // 참조된 Crux 서버앱의 코드 사용. 서비스와 레포지토리 구현체 사용
