@@ -77,17 +77,16 @@ public class TcpServer : BackgroundService
         using var networkStream = client.GetStream();
         byte[] buffer = new byte[1024];
 
-        // 1초마다 DB 조회 후 클라이언트에 스트리밍
         try
         {
             _logger.LogInformation("Client connection initiated for streaming.");
 
             while (!stoppingToken.IsCancellationRequested && client.Connected)
             {
-                // 헤더 읽기 (8바이트)
+                // 헤더 읽기 (5바이트)
                 byte[] headerBuffer = new byte[5];
                 // 클라이언트로부터 데이터 수신 (연결 상태 확인)
-                int headerBytesRead = await networkStream.ReadAsync(buffer, 0, buffer.Length, stoppingToken);
+                int headerBytesRead = await networkStream.ReadAsync(headerBuffer, 0, headerBuffer.Length, stoppingToken);
 
 
                 if (headerBytesRead == 0)
@@ -108,7 +107,7 @@ public class TcpServer : BackgroundService
                 _logger.LogInformation($"[HEADER] FrameType: {frameType}, MessageLength: {messageLength}, MessageVersion: {messageVersion}, Role: {role}");
 
                 // 페이로드 읽기
-                byte[] payloadBuffer = new byte[messageLength - 5];
+                byte[] payloadBuffer = new byte[messageLength];
                 int payloadBytesRead = await networkStream.ReadAsync(payloadBuffer, 0, payloadBuffer.Length, stoppingToken);
 
                 if (payloadBytesRead == 0)
@@ -123,10 +122,10 @@ public class TcpServer : BackgroundService
                 Array.Copy(payloadBuffer, 4, timeBytes, 0, 8); // Time (8바이트)
                 long time = BitConverter.ToInt64(timeBytes, 0);
 
-                string lotId = Encoding.ASCII.GetString(payloadBuffer, 12, 10).TrimEnd('\0'); // LotId (10바이트)
-                string shift = Encoding.ASCII.GetString(payloadBuffer, 22, 4).TrimEnd('\0'); // Shift (4바이트)
-                long employeeNumber = BitConverter.ToInt64(payloadBuffer, 26); // EmployeeNumber (8바이트)
-                int total = BitConverter.ToInt32(payloadBuffer, 34); // Total (4바이트)
+                string lotId = Encoding.ASCII.GetString(payloadBuffer, 12, 20).TrimEnd('\0'); // LotId (20바이트)
+                string shift = Encoding.ASCII.GetString(payloadBuffer, 32, 4).TrimEnd('\0'); // Shift (4바이트)
+                long employeeNumber = BitConverter.ToInt64(payloadBuffer, 36); // EmployeeNumber (10바이트)
+                int total = BitConverter.ToInt32(payloadBuffer, 46); // Total (4바이트)
 
                 _logger.LogInformation($"[PAYLOAD] Time: {time}, LotId: {lotId}, Shift: {shift}, EmployeeNumber: {employeeNumber}, Total: {total}");
 
