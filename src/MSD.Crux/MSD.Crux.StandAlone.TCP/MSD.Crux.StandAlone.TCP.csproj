@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -9,9 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MSD.Crux.Common\MSD.Crux.Common.csproj"/>
-    <ProjectReference Include="..\MSD.Crux.Core\MSD.Crux.Core.csproj"/>
-    <ProjectReference Include="..\MSD.Crux.Infra\MSD.Crux.Infra.csproj"/>
+    <ProjectReference Include="..\MSD.Crux.Common\MSD.Crux.Common.csproj" />
+    <ProjectReference Include="..\MSD.Crux.Core\MSD.Crux.Core.csproj" />
+    <ProjectReference Include="..\MSD.Crux.Infra\MSD.Crux.Infra.csproj" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,11 +22,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="appsettings.json"/>
+    <None Remove="appsettings.json" />
     <Content Include="appsettings.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Remove="appsettings.Local.json"/>
+    <None Remove="appsettings.Local.json" />
     <Content Include="appsettings.Local.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
