@@ -3,12 +3,15 @@
 
 using System.Net.Sockets;
 using System.Text;
+using Microsoft.Extensions.Configuration;
+using MSD.Crux.Core.Helpers;
 using MSD.Crux.Core.Models;
 
 namespace MSD.Client.TCP
 {
     internal class Program
     {
+
         static async Task Main(string[] args)
         {
             Console.WriteLine("Socket Client Test Application");
@@ -27,6 +30,17 @@ namespace MSD.Client.TCP
                 Shift = "A",
                 EmployeeNumber = "202340014",
                 Total = 1000
+            };
+
+            User user = new User()
+            {
+                Id = 30,
+                EmployeeNumber = 202340014,
+                LoginId = "nati",
+                LoginPw = "ix83VPAon+7AjG0JPkavXDaHtyYCeObFml4iI6WQK2w=",
+                Salt = "eY4uyzWqHi8BeVyl6BbV2w",
+                Name = "나띠 욘따라락",
+                Roles = "vision"
             };
 
             try
@@ -66,7 +80,7 @@ namespace MSD.Client.TCP
                     {
                         // FrameType 2: JWT 생성 (생성 로직은 비워 둠)
                         Console.WriteLine("FrameType 2 selected. Generating JWT...");
-                        message = CreateJWTMessage(frameType); // JWT 생성 로직 추가 필요
+                        message = CreateJWTMessage(frameType, user); // JWT 생성 로직 추가 필요
                     }
                     else
                     {
@@ -148,10 +162,32 @@ namespace MSD.Client.TCP
         }
 
         // FrameType 2: JWT 메시지 생성 (JWT 생성 로직은 비워둠)
-        private static byte[] CreateJWTMessage(byte frameType)
+        private static byte[] CreateJWTMessage(byte frameType, User user)
         {
-            Console.WriteLine("JWT creation logic is not implemented yet.");
-            return new byte[] { frameType, 0 }; // 임시 바이트 배열 반환
+            string token = "#@$#@%@%#@$@#THIS_IS_FAKE_TOKEN@#@%#@$@#$@#%@#%$!#$!#$@#@$#@%@%#@$@#THIS_IS_FAKE_TOKEN@#@%#@$@#$@#%@#%$!#$!#$@#@$#@%@%#@$@#THIS_IS_FAKE_TOKEN@#@%#@$@#$@#%@#%$!#$!#$@#@$#@%@%#@$@#THIS_IS_FAKE_TOKEN@#@%#@$@#$@#%@#%$!#$!#$@";
+            byte[] jwtBytes = Encoding.UTF8.GetBytes(token);
+
+            // JWT 메시지의 길이를 확인 (200~500 바이트 제한 체크)
+            if (jwtBytes.Length < 200 || jwtBytes.Length > 500)
+            {
+                throw new ArgumentException($"JWT의 길이는 200~500 바이트여야 합니다. 현재 길이: {jwtBytes.Length}");
+            }
+
+            // 전체 메시지 크기: Header(5 바이트) + Payload(JWT 크기)
+            int totalLength = 5 + jwtBytes.Length;
+            byte[] message = new byte[totalLength];
+
+            // Header 생성
+            message[0] = frameType; // FrameType (0: JWT, 1: 생산CUM, 2: 비전CUM)
+            message[1] = (byte)jwtBytes.Length; // MessageLength (JWT 페이로드 크기)
+            message[2] = 1; // MessageVersion
+            message[3] = 1; // Role (0: 생산, 1: 품질, 2: SCADA)
+            message[4] = 0; // Reserved (스페어)
+
+            // Payload(JWT) 복사
+            Array.Copy(jwtBytes, 0, message, 5, jwtBytes.Length);
+
+            return message;
         }
 
     }
