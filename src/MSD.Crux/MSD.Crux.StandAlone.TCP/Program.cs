@@ -6,6 +6,7 @@ using Microsoft.Extensions.Logging;
 using MSD.Crux.Core.IRepositories;
 using MSD.Crux.Core.IServices;
 using MSD.Crux.Infra.Repositories;
+using MSD.Crux.Infra.Repositories.Db;
 using MSD.Crux.Infra.Services;
 using MSD.Crux.StandAlone.TCP;
 using Npgsql;
@@ -29,7 +30,8 @@ IHost? host = Host.CreateDefaultBuilder(args)
                                          // 커스텀 TCP 소켓 서버 클래스 등록
                                          services.AddHostedService(sp => new TcpServer(51900, sp.GetRequiredService<ILogger<TcpServer>>(),
                                                                                        sp.GetRequiredService<IUserRepo>(),
-                                                                                       configuration: configuration));
+                                                                                       configuration: configuration,
+                                                                                       sp.GetRequiredService<IVisionCumRepo>()));
                                          // Npgsql을 이용한 Db 커넥션
                                          services.AddTransient<IDbConnection>(sp =>
                                                                               {
@@ -39,6 +41,7 @@ IHost? host = Host.CreateDefaultBuilder(args)
                                          // 참조된 Crux 서버앱의 코드 사용. 서비스와 레포지토리 구현체 사용
                                          services.AddTransient<IEmployeeRepo, EmployeeRepoPsqlDb>();
                                          services.AddTransient<IUserRepo, UserRepoPsqlDb>();
+                                         services.AddTransient<IVisionCumRepo, VisionCumRepoPsqlDb>();
                                          services.AddScoped<IEmployeeService, EmployeeService>();
                                          services.AddScoped<IUserService, UserService>();
                                          services.AddScoped<IUserLoginService, UserLoginService>();
