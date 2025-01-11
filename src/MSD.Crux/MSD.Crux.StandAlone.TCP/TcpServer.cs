@@ -1,3 +1,4 @@
+using System.Data;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -5,6 +6,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MSD.Crux.Core.IRepositories;
+using MSD.Crux.Core.Models;
+using MSD.Crux.Infra.Repositories;
+using MSD.Crux.Infra.Repositories.Db;
 
 namespace MSD.Crux.StandAlone.TCP;
 
@@ -18,6 +22,8 @@ public class TcpServer : BackgroundService
     private readonly ILogger<TcpServer> _logger;
     private readonly IUserRepo _userRepo;
     private readonly IConfiguration _configuration;
+    private readonly IDbConnection _dbConnection;
+    private IVisionCumRepo _visionCumRepo;
 
     /// <summary>
     /// 생성자. 객체 생성시 DIC 에 등록된 객체들이 매개변수를 통해 주입된다.
@@ -25,12 +31,13 @@ public class TcpServer : BackgroundService
     /// <param name="port">DI로 주입되는 포트 넘버</param>
     /// <param name="logger">DI로 주입되는 ILogger 구현체 객체</param>
     /// <param name="userRepo">DI로 주입되는 MSD.Crux.Core 레포지토리 인터페이스를 구현한 객체(MSD.Crux.Infra.UserRepoPsqlDb)</param>
-    public TcpServer(int port, ILogger<TcpServer> logger, IUserRepo userRepo, IConfiguration configuration)
+    public TcpServer(int port, ILogger<TcpServer> logger, IUserRepo userRepo, IConfiguration configuration, IVisionCumRepo visionCumRepo)
     {
         _port = port;
         _logger = logger;
         _userRepo = userRepo;
         _configuration = configuration;
+        _visionCumRepo = visionCumRepo;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -117,11 +124,12 @@ public class TcpServer : BackgroundService
 
                 if (frameType == 1)
                 {
-                    HandlePayload(payloadBuffer);
+                    HandleJWT(payloadBuffer);
                 }
                 else if (frameType == 2)
                 {
-                    HandleJWT(payloadBuffer);
+                    VisionCum visinoCum = HandlePayload(payloadBuffer);
+                    await _visionCumRepo.AddVisionCumAsync(visinoCum);
                 }
 
                 // 응답 전송
@@ -143,7 +151,11 @@ public class TcpServer : BackgroundService
             _logger.LogInformation("Client fully disconnected.");
         }
     }
-    private void HandlePayload(byte[] payload)
+
+    /// <summary>
+    /// FrameType 값이 2일 때 payload를 파싱
+    /// </summary>
+    private VisionCum HandlePayload(byte[] payload)
     {
         string lineId = Encoding.ASCII.GetString(payload, 0, 4).TrimEnd('\0');
         long time = BitConverter.ToInt64(payload, 4);
@@ -153,8 +165,22 @@ public class TcpServer : BackgroundService
         int total = BitConverter.ToInt32(payload, 46);
 
         _logger.LogInformation($"[PAYLOAD] LineId: {lineId}, Time: {time}, LotId: {lotId}, Shift: {shift}, EmployeeNumber: {employeeNumber}, Total: {total}");
+        return new VisionCum
+        {
+            LineId = lineId,
+            Time = ConvertUnixTimeToDateTime(time),
+            LotId = lotId,
+            Shift = shift,
+            EmployeeNumber = (int)employeeNumber,
+            Total = total
+
+        };
     }
 
+
+    /// <summary>
+    /// FrameType 값이 1일 때 payload를 파싱
+    /// </summary>
     private void HandleJWT(byte[] payload)
     {
         string jwtToken = Encoding.ASCII.GetString(payload).TrimEnd('\0');
@@ -168,5 +194,16 @@ public class TcpServer : BackgroundService
         }
 
         _logger.LogInformation("[JWT] Authentication successful.");
+    }
+    /// <summary>
+    /// 유닉스 타임스탬프를 DateTime형식으로 변경
+    /// </summary>
+    public static DateTime ConvertUnixTimeToDateTime(long unixTime)
+    {
+        // 유닉스 에포크 (1970년 1월 1일 UTC)
+        DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
+        // 초 단위 타임스탬프를 에포크에 더하여 DateTime 반환
+        return epoch.AddSeconds(unixTime);
     }
 }

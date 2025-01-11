@@ -28,7 +28,7 @@ namespace MSD.Client.TCP
                 Time = DateTime.UtcNow,
                 LotId = "AAAA120250107-1",
                 Shift = "A",
-                EmployeeNumber = "202340014",
+                EmployeeNumber = 202340014,
                 Total = 1000
             };
 
@@ -54,7 +54,7 @@ namespace MSD.Client.TCP
 
                 while (true)
                 {
-                    Console.Write("Enter FrameType (1 for Payload, 2 for JWT, or 'exit' to quit): ");
+                    Console.Write("Enter FrameType (1 for JWT, 2 for VPBUS, or 'exit' to quit): ");
                     string input = Console.ReadLine();
 
                     if (input?.ToLower() == "exit")
@@ -71,12 +71,12 @@ namespace MSD.Client.TCP
 
                     byte[] message;
 
-                    if (frameType == 1)
+                    if (frameType == 2)
                     {
                         // FrameType 1: 하드코딩된 페이로드 생성
                         message = CreatePayloadMessage(frameType, visionCum);
                     }
-                    else if (frameType == 2)
+                    else if (frameType == 1)
                     {
                         // FrameType 2: JWT 생성 (생성 로직은 비워 둠)
                         Console.WriteLine("FrameType 2 selected. Generating JWT...");
@@ -112,7 +112,7 @@ namespace MSD.Client.TCP
                     long employeeNumber = BitConverter.ToInt64(message, 41);
                     Console.WriteLine($"EmployeeNumber: {employeeNumber}");
 
-                    int total = BitConverter.ToInt32(message, 49);
+                    int total = BitConverter.ToInt32(message, 51);
                     Console.WriteLine($"Total: {total}");
 
                     // 메시지 전송
@@ -155,7 +155,7 @@ namespace MSD.Client.TCP
             BitConverter.GetBytes(new DateTimeOffset(visionCum.Time).ToUnixTimeSeconds()).CopyTo(message, 9); // Time (8 bytes)
             Encoding.ASCII.GetBytes(visionCum.LotId?.PadRight(20, '\0') ?? new string('\0', 20)).CopyTo(message, 17); // LotId (20 bytes)
             Encoding.ASCII.GetBytes(visionCum.Shift?.PadRight(4, ' ') ?? "    ").CopyTo(message, 37); // Shift (4 bytes)
-            BitConverter.GetBytes(long.Parse(visionCum.EmployeeNumber ?? "0")).CopyTo(message, 41); // EmployeeNumber (8 bytes)
+            BitConverter.GetBytes((visionCum.EmployeeNumber ?? 0)).CopyTo(message, 41); // EmployeeNumber (10 bytes)
             BitConverter.GetBytes(visionCum.Total).CopyTo(message, 51); // Total (4 bytes)
 
             return message;
