@@ -4,9 +4,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MSD.Crux.Core.IRepositories;
-using MSD.Crux.Core.IServices;
-using MSD.Crux.Infra.Repositories;
-using MSD.Crux.Infra.Services;
 using MSD.Crux.Shared;
 using MSD.Crux.StandAlone.TCP;
 using Npgsql;
@@ -28,7 +25,8 @@ IHost? host = Host.CreateDefaultBuilder(args)
                                      {
                                          IConfiguration configuration = hostContext.Configuration;
                                          // 커스텀 TCP 소켓 서버 클래스 등록
-                                         services.AddHostedService(sp => new TcpServer(51900, sp.GetRequiredService<ILogger<TcpServer>>(),
+                                         services.AddHostedService(sp => new TcpServer(51900,
+                                                                                       sp.GetRequiredService<ILogger<TcpServer>>(),
                                                                                        sp.GetRequiredService<IUserRepo>(),
                                                                                        configuration: configuration,
                                                                                        sp.GetRequiredService<IVisionCumRepo>()));
@@ -41,8 +39,6 @@ IHost? host = Host.CreateDefaultBuilder(args)
                                          // 참조된 Crux 서버앱의 코드 사용. 서비스와 레포지토리 구현체 사용 (Shared 확장 메서드로 서비스와 레포지토리를 등록)
                                          services.AddCruxServicesAll();
                                          services.AddCruxRepositoriesAll();
-
-
                                      })
                   //로깅 설정
                   .ConfigureLogging(logging =>

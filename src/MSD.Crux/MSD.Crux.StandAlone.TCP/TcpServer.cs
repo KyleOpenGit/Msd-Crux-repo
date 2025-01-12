@@ -22,8 +22,7 @@ public class TcpServer : BackgroundService
     private readonly ILogger<TcpServer> _logger;
     private readonly IUserRepo _userRepo;
     private readonly IConfiguration _configuration;
-    private readonly IDbConnection _dbConnection;
-    private IVisionCumRepo _visionCumRepo;
+    private readonly IVisionCumRepo _visionCumRepo;
 
     /// <summary>
     /// 생성자. 객체 생성시 DIC 에 등록된 객체들이 매개변수를 통해 주입된다.
