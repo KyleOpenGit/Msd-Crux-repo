@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using MSD.Crux.Core.IRepositories;
 using MSD.Crux.Shared;
 using MSD.Crux.StandAlone.TCP;
-using Npgsql;
 
 //환경이 없으면 "Production"환경
 string environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production";
@@ -24,28 +23,19 @@ IHost? host = Host.CreateDefaultBuilder(args)
                   .ConfigureServices((hostContext, services) =>
                                      {
                                          IConfiguration configuration = hostContext.Configuration;
+                                         // 공통 DI 구성 추가 (참조된 Crux 서버앱의 코드 사참조된 Crux 서버앱의 코드 사용)
+                                         // 서비스와 레포지토리 구현체 사용 (Shared 확장 메서드로 서비스와 레포지토리를 등록)
+                                         services.AddCruxSharedConfiguration(configuration);
+                                         services.AddCruxServicesAll();
+                                         services.AddCruxRepositoriesAll();
+
                                          // 커스텀 TCP 소켓 서버 클래스 등록
                                          services.AddHostedService(sp => new TcpServer(51900,
                                                                                        sp.GetRequiredService<ILogger<TcpServer>>(),
                                                                                        sp.GetRequiredService<IUserRepo>(),
                                                                                        configuration: configuration,
                                                                                        sp.GetRequiredService<IVisionCumRepo>()));
-                                         // Npgsql을 이용한 Db 커넥션
-                                         services.AddTransient<IDbConnection>(sp =>
-                                                                              {
-                                                                                  string? connectionString = configuration.GetConnectionString("Postgres");
-                                                                                  return new NpgsqlConnection(connectionString);
-                                                                              });
-                                         // 참조된 Crux 서버앱의 코드 사용. 서비스와 레포지토리 구현체 사용 (Shared 확장 메서드로 서비스와 레포지토리를 등록)
-                                         services.AddCruxServicesAll();
-                                         services.AddCruxRepositoriesAll();
                                      })
-                  //로깅 설정
-                  .ConfigureLogging(logging =>
-                                    {
-                                        logging.ClearProviders();
-                                        logging.AddConsole();
-                                    })
                   //호스트 빌드
                   .Build();
 
