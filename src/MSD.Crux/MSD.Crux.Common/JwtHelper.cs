@@ -4,7 +4,7 @@ using System.Security.Cryptography;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 
-namespace MSD.Crux.Core.Helpers;
+namespace MSD.Crux.Common;
 
 /// <summary>
 /// JWT 생성, 검증 도우미 클래스
