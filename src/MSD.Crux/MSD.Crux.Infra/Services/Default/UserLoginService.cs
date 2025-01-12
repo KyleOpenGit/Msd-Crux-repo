@@ -75,14 +75,16 @@ public class UserLoginService(IUserRepo _userRepo, IEmployeeRepo _employeeRepo, 
 
         var employee = await _employeeRepo.GetByEmployeeNumberAsync(user.EmployeeNumber);
         // 클레임 생성
-        List<Claim>? claims = new List<Claim>
-                              {
-                                  new Claim(ClaimTypes.NameIdentifier, user.LoginId!),
-                                  new Claim(ClaimTypes.Name, user.Name),
-                                  new Claim("EmployeeNumber", user.EmployeeNumber.ToString()),
-                                  new Claim(ClaimTypes.Role, user.Roles ?? string.Empty)
-                              };
-        string token = JwtHelper.GenerateToken(claims, _configuration);
+        CruxClaim cruxClaimClaims = new()
+        {
+            LoginId = user.LoginId ?? string.Empty,
+            EmployeeName = user.Name,
+            EmployeeNumber = user.EmployeeNumber,
+            Roles = user.Roles ?? string.Empty,
+        };
+
+        // 클레임 리스트 생성 및 JWT 토큰 생성
+        string token = JwtHelper.GenerateToken(cruxClaimClaims.ToClaims(), _configuration);
 
         // 응답 DTO 생성
         return new UserLoginRspDto

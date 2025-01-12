@@ -11,5 +11,9 @@
     <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.3.0"/>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MSD.Crux.Core\MSD.Crux.Core.csproj" />
+  </ItemGroup>
+
   
 </Project>

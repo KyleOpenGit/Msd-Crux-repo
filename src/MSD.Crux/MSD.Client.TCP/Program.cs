@@ -1,8 +1,5 @@
 ﻿using System.Net.Sockets;
-using System.Security.Claims;
 using System.Text;
-using Microsoft.Extensions.Configuration;
-using MSD.Crux.Common;
 using MSD.Crux.Core.Models;
 
 namespace MSD.Client.TCP

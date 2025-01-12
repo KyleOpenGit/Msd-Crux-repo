@@ -5,10 +5,7 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
     </PropertyGroup>
-
-    <ItemGroup>
-      <ProjectReference Include="..\MSD.Crux.Common\MSD.Crux.Common.csproj" />
-    </ItemGroup>
+  
 
     <ItemGroup>
       <Reference Include="Microsoft.Extensions.Configuration.Abstractions">

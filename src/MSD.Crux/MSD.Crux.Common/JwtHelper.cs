@@ -80,7 +80,6 @@ public static class JwtHelper
             {
                 token = token.Substring(7); // "Bearer " 접두사 제거
             }
-
             return handler.ValidateToken(token, vParameters, out _);
         }
         catch (Exception ex)

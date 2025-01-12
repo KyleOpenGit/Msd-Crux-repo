@@ -42,7 +42,7 @@ public class TcpServer : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        var listener = new TcpListener(IPAddress.Any, _port);
+        TcpListener? listener = new(IPAddress.Any, _port);
         listener.Start();
         _logger.LogInformation($"TCP 소켓 서버 실행. 포트넘버: {_port}");
 
@@ -81,7 +81,7 @@ public class TcpServer : BackgroundService
     /// <exception cref="Exception">통신 중 발생한 예외는 로그로 기록.</exception>
     private async Task HandleClientAsync(TcpClient client, CancellationToken stoppingToken)
     {
-        using var networkStream = client.GetStream();
+        await using var networkStream = client.GetStream();
         byte[] buffer = new byte[1024];
 
         try
@@ -183,11 +183,8 @@ public class TcpServer : BackgroundService
             return;
         }
 
-        // 사용자 정보 출력. userId &
-        string userId = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "Unknown";
-        string roles = string.Join(", ", principal.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value));
-
-        _logger.LogInformation($"[JWT] Authentication successful. UserId: {userId}, Roles: {roles}");
+        var cruxClaim = CruxClaim.FromClaims(principal.Claims);
+        _logger.LogInformation($"[JWT] Authentication successful. LoginId: {cruxClaim.LoginId}, Roles: {cruxClaim.Roles}");
     }
 
     /// <summary>
