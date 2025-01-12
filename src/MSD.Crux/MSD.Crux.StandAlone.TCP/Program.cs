@@ -7,6 +7,7 @@ using MSD.Crux.Core.IRepositories;
 using MSD.Crux.Core.IServices;
 using MSD.Crux.Infra.Repositories;
 using MSD.Crux.Infra.Services;
+using MSD.Crux.Shared;
 using MSD.Crux.StandAlone.TCP;
 using Npgsql;
 
@@ -37,13 +38,11 @@ IHost? host = Host.CreateDefaultBuilder(args)
                                                                                   string? connectionString = configuration.GetConnectionString("Postgres");
                                                                                   return new NpgsqlConnection(connectionString);
                                                                               });
-                                         // 참조된 Crux 서버앱의 코드 사용. 서비스와 레포지토리 구현체 사용
-                                         services.AddTransient<IEmployeeRepo, EmployeeRepoPsqlDb>();
-                                         services.AddTransient<IUserRepo, UserRepoPsqlDb>();
-                                         services.AddTransient<IVisionCumRepo, VisionCumRepoPsqlDb>();
-                                         services.AddScoped<IEmployeeService, EmployeeService>();
-                                         services.AddScoped<IUserService, UserService>();
-                                         services.AddScoped<IUserLoginService, UserLoginService>();
+                                         // 참조된 Crux 서버앱의 코드 사용. 서비스와 레포지토리 구현체 사용 (Shared 확장 메서드로 서비스와 레포지토리를 등록)
+                                         services.AddCruxServicesAll();
+                                         services.AddCruxRepositoriesAll();
+
+
                                      })
                   //로깅 설정
                   .ConfigureLogging(logging =>
