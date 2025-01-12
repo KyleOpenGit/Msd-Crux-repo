@@ -5,8 +5,17 @@ using MSD.Crux.Core.Models;
 
 namespace MSD.Client.TCP;
 
+/// <summary>
+/// 소켓통신으로 전송할 데이터(메시지)를 만든다
+/// </summary>
 public static class MessageBuilder
 {
+    /// <summary>
+    /// Vision 검사 누적검사량 소켓통신 프로토콜로 전송할 바이너리 데이터를 만든다
+    /// </summary>
+    /// <param name="frameType">프레임 타입 번호</param>
+    /// <param name="visionCum">비전검사 누적 검사량 객체</param>
+    /// <returns>소켓통신 바이너리 frame</returns>
     public static byte[] CreateVisionTypeFrame(byte frameType, VisionCum visionCum)
     {
         int payloadSize = 50;
@@ -29,9 +38,17 @@ public static class MessageBuilder
         return message;
     }
 
+    /// <summary>
+    /// Jwt 인증용 소켓통신 프로토콜로 전송할 바이너리 데이터를 만든다.
+    /// </summary>
+    /// <param name="frameType">프레임 타입 번호 </param>
+    /// <param name="user">토큰을 생성할 유저 객체</param>
+    /// <param name="configuration">구성파일 객체</param>
+    /// <returns>소켓통신 바이너리 frame</returns>
+    /// <exception cref="ArgumentException"></exception>
     public static byte[] CreateJwtTypeFrame(byte frameType, User user, IConfiguration configuration)
     {
-        CruxClaim cruxClaimClaims = new()
+        CruxClaim cruxClaim = new()
         {
             LoginId = user.LoginId ?? string.Empty,
             EmployeeName = user.Name,
@@ -39,7 +56,7 @@ public static class MessageBuilder
             Roles = user.Roles ?? string.Empty,
         };
 
-        string token = JwtHelper.GenerateToken(cruxClaimClaims.ToClaims(), configuration);
+        string token = JwtHelper.GenerateToken(cruxClaim.ToClaims(), configuration);
 
         byte[] payload = Encoding.UTF8.GetBytes(token);
 
