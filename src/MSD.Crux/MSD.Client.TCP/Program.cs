@@ -1,10 +1,6 @@
-﻿// Licensed to the .NET Foundation under one or more agreements.
-// The .NET Foundation licenses this file to you under the MIT license.
-
-using System.Net.Sockets;
+﻿using System.Net.Sockets;
 using System.Text;
 using Microsoft.Extensions.Configuration;
-using MSD.Crux.Core.Helpers;
 using MSD.Crux.Core.Models;
 
 namespace MSD.Client.TCP
@@ -164,13 +160,13 @@ namespace MSD.Client.TCP
         // FrameType 2: JWT 메시지 생성 (JWT 생성 로직은 비워둠)
         private static byte[] CreateJWTMessage(byte frameType, User user)
         {
-            string token = "#@$#@%@%#@$@#THIS_IS_FAKE_TOKEN@#@%#@$@#$@#%@#%$!#$!#$@#@$#@%@%#@$@#THIS_IS_FAKE_TOKEN@#@%#@$@#$@#%@#%$!#$!#$@#@$#@%@%#@$@#THIS_IS_FAKE_TOKEN@#@%#@$@#$@#%@#%$!#$!#$@#@$#@%@%#@$@#THIS_IS_FAKE_TOKEN@#@%#@$@#$@#%@#%$!#$!#$@";
+            string token = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1laWRlbnRpZmllciI6InN0cmluZyIsImh0dHA6Ly9zY2hlbWFzLnhtbHNvYXAub3JnL3dzLzIwMDUvMDUvaWRlbnRpdHkvY2xhaW1zL25hbWUiOiJzdHJpbmciLCJFbXBsb3llZU51bWJlciI6IjIwMjQ0MDQ1NiIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6ImluamVjdGlvbiIsImV4cCI6MTczNjc0MTA1OCwiaXNzIjoiTVNEIENydXgiLCJhdWQiOiJNU0QgQ2xpZW50In0.UOOrSamvpDOK7vKmtPxeFUsmvIwJQGek6S5NqAuy_X20-n8AUnV572W82yntrJqg7pxoC4JJAMcqv6C9gM4nnpNZW5JSSL9oHMU2Z38qoSgWQBfC8T7URf9Q5GCIW1ni0GJR7lfpZ2C3GcA7ZDLsVjWIwBEi0w8-TwES2dK9YzHhu2_ve0yjE-AWQ_yl1rbqDExJUIO6Dfryf7zHdBRzryEZcfyJNk0t_zVNEs2PCLJGWX4sL91au-k4H50PLO24Jc_xW1JL_WkRJNW1lntKqcsY-8po2xGpKsHVZQJwN-BQNBblC5dsp-509B5ftNMW1zoxPQhMntM2-ld2ScQtTQ";
             byte[] jwtBytes = Encoding.UTF8.GetBytes(token);
 
             // JWT 메시지의 길이를 확인 (200~500 바이트 제한 체크)
-            if (jwtBytes.Length < 200 || jwtBytes.Length > 500)
+            if (jwtBytes.Length < 200 || jwtBytes.Length > 1024)
             {
-                throw new ArgumentException($"JWT의 길이는 200~500 바이트여야 합니다. 현재 길이: {jwtBytes.Length}");
+                throw new ArgumentException($"JWT의 길이는 200~1024 바이트여야 합니다. 현재 길이: {jwtBytes.Length}");
             }
 
             // 전체 메시지 크기: Header(5 바이트) + Payload(JWT 크기)
