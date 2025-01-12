@@ -1,13 +1,14 @@
 using System.Data;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Claims;
 using System.Text;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using MSD.Crux.Common;
 using MSD.Crux.Core.IRepositories;
 using MSD.Crux.Core.Models;
-using MSD.Crux.Infra.Repositories;
 
 namespace MSD.Crux.StandAlone.TCP;
 
@@ -89,8 +90,8 @@ public class TcpServer : BackgroundService
 
             while (!stoppingToken.IsCancellationRequested && client.Connected)
             {
-                // 헤더 읽기 (5바이트)
-                byte[] headerBuffer = new byte[5];
+                // 헤더 읽기 (6바이트)
+                byte[] headerBuffer = new byte[6];
                 // 클라이언트로부터 데이터 수신 (연결 상태 확인)
                 int headerBytesRead = await networkStream.ReadAsync(headerBuffer, 0, headerBuffer.Length, stoppingToken);
 
@@ -104,10 +105,10 @@ public class TcpServer : BackgroundService
 
                 // 헤더 파싱
                 byte frameType = headerBuffer[0];
-                byte messageLength = headerBuffer[1];
-                byte messageVersion = headerBuffer[2];
-                byte role = headerBuffer[3];
-                byte reserved = headerBuffer[4];
+                ushort messageLength = BitConverter.ToUInt16(headerBuffer, 1); // 2바이트 읽기
+                byte messageVersion = headerBuffer[3];
+                byte role = headerBuffer[4];
+                byte reserved = headerBuffer[5];
 
                 // 로그 출력
                 _logger.LogInformation($"[HEADER] FrameType: {frameType}, MessageLength: {messageLength}, MessageVersion: {messageVersion}, Role: {role}");
@@ -164,18 +165,8 @@ public class TcpServer : BackgroundService
         int total = BitConverter.ToInt32(payload, 46);
 
         _logger.LogInformation($"[PAYLOAD] LineId: {lineId}, Time: {time}, LotId: {lotId}, Shift: {shift}, EmployeeNumber: {employeeNumber}, Total: {total}");
-        return new VisionCum
-        {
-            LineId = lineId,
-            Time = ConvertUnixTimeToDateTime(time),
-            LotId = lotId,
-            Shift = shift,
-            EmployeeNumber = (int)employeeNumber,
-            Total = total
-
-        };
+        return new VisionCum { LineId = lineId, Time = ConvertUnixTimeToDateTime(time), LotId = lotId, Shift = shift, EmployeeNumber = (int)employeeNumber, Total = total };
     }
-
 
     /// <summary>
     /// FrameType 값이 1일 때 payload를 파싱
@@ -183,17 +174,22 @@ public class TcpServer : BackgroundService
     private void HandleJWT(byte[] payload)
     {
         string jwtToken = Encoding.ASCII.GetString(payload).TrimEnd('\0');
-        _logger.LogInformation($"[JWT] Token: {jwtToken}");
 
-        // JWT 유효성 검증 로직 추가
-        // 예: JwtHelper.VerifyToken(jwtToken);
-        if (string.IsNullOrEmpty(jwtToken))
+        // JWT 유효성 검증
+        ClaimsPrincipal? principal = JwtHelper.ValidateToken(jwtToken, _configuration);
+        if (principal is null)
         {
-            throw new InvalidOperationException("Invalid JWT token.");
+            _logger.LogWarning($"[JWT] 토큰이 유효하지 않습니다. 잘못된 토큰 또는 만료. \n 토큰문자열: {jwtToken}");
+            return;
         }
 
-        _logger.LogInformation("[JWT] Authentication successful.");
+        // 사용자 정보 출력. userId &
+        string userId = principal.FindFirst(ClaimTypes.NameIdentifier)?.Value ?? "Unknown";
+        string roles = string.Join(", ", principal.Claims.Where(c => c.Type == ClaimTypes.Role).Select(c => c.Value));
+
+        _logger.LogInformation($"[JWT] Authentication successful. UserId: {userId}, Roles: {roles}");
     }
+
     /// <summary>
     /// 유닉스 타임스탬프를 DateTime형식으로 변경
     /// </summary>

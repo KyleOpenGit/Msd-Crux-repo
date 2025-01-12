@@ -2,7 +2,7 @@ using System.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using MSD.Crux.API.Helpers;
-using MSD.Crux.Core.Helpers;
+using MSD.Crux.Common;
 using MSD.Crux.Shared;
 using Npgsql;
 
@@ -35,13 +35,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
                                                                                                 ValidateAudience = true,
                                                                                                 ValidateLifetime = true,
                                                                                                 ValidateIssuerSigningKey = true,
-                                                                                                ValidIssuer =
-                                                                                                                                        builder.Configuration["Jwt:Issuer"],
-                                                                                                ValidAudience =
-                                                                                                                                        builder.Configuration["Jwt:Audience"],
-                                                                                                IssuerSigningKey =
-                                                                                                                                        JwtHelper
-                                                                                                                                            .GetPublicKey(builder.Configuration)
+                                                                                                ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                                                                                                ValidAudience = builder.Configuration["Jwt:Audience"],
+                                                                                                IssuerSigningKey = JwtHelper.GetPublicKey(builder.Configuration)
                                                                                             };
                                                                                         });
 
