@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.Extensions.Configuration;
 using MSD.Crux.Core.Helpers;
 using MSD.Crux.Core.IRepositories;
@@ -72,7 +73,15 @@ public class UserLoginService(IUserRepo _userRepo, IEmployeeRepo _employeeRepo, 
         }
 
         var employee = await _employeeRepo.GetByEmployeeNumberAsync(user.EmployeeNumber);
-        string token = JwtHelper.GenerateToken(user, _configuration);
+        // 클레임 생성
+        List<Claim>? claims = new List<Claim>
+                              {
+                                  new Claim(ClaimTypes.NameIdentifier, user.LoginId!),
+                                  new Claim(ClaimTypes.Name, user.Name),
+                                  new Claim("EmployeeNumber", user.EmployeeNumber.ToString()),
+                                  new Claim(ClaimTypes.Role, user.Roles ?? string.Empty)
+                              };
+        string token = JwtHelper.GenerateToken(claims, _configuration);
 
         // 응답 DTO 생성
         return new UserLoginRspDto
@@ -84,7 +93,7 @@ public class UserLoginService(IUserRepo _userRepo, IEmployeeRepo _employeeRepo, 
             Photo = employee?.Photo ?? string.Empty,
             Shift = employee?.Shift ?? string.Empty,
             JwtToken = token,
-            JwtPublicKey = _configuration["Jwt:PublicKey"]
+            JwtPublicKey = JwtHelper.GetPublicKeyAsString(_configuration)
         };
     }
 
