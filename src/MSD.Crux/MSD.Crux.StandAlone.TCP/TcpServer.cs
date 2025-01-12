@@ -90,8 +90,8 @@ public class TcpServer : BackgroundService
 
             while (!stoppingToken.IsCancellationRequested && client.Connected)
             {
-                // 헤더 읽기 (5바이트)
-                byte[] headerBuffer = new byte[5];
+                // 헤더 읽기 (6바이트)
+                byte[] headerBuffer = new byte[6];
                 // 클라이언트로부터 데이터 수신 (연결 상태 확인)
                 int headerBytesRead = await networkStream.ReadAsync(headerBuffer, 0, headerBuffer.Length, stoppingToken);
 
@@ -105,10 +105,10 @@ public class TcpServer : BackgroundService
 
                 // 헤더 파싱
                 byte frameType = headerBuffer[0];
-                byte messageLength = headerBuffer[1];
-                byte messageVersion = headerBuffer[2];
-                byte role = headerBuffer[3];
-                byte reserved = headerBuffer[4];
+                ushort messageLength = BitConverter.ToUInt16(headerBuffer, 1); // 2바이트 읽기
+                byte messageVersion = headerBuffer[3];
+                byte role = headerBuffer[4];
+                byte reserved = headerBuffer[5];
 
                 // 로그 출력
                 _logger.LogInformation($"[HEADER] FrameType: {frameType}, MessageLength: {messageLength}, MessageVersion: {messageVersion}, Role: {role}");
