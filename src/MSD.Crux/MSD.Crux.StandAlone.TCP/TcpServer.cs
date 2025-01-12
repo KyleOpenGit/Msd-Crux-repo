@@ -59,7 +59,7 @@ public class TcpServer : BackgroundService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "An error occurred in the TCP server.");
+            _logger.LogError(ex, "TCP server 에러");
         }
         finally
         {
@@ -147,7 +147,7 @@ public class TcpServer : BackgroundService
         finally
         {
             client.Close();
-            _logger.LogInformation("Client fully disconnected.");
+            _logger.LogInformation("클라이언트 종료됨");
         }
     }
 
@@ -183,13 +183,13 @@ public class TcpServer : BackgroundService
         }
 
         var cruxClaim = CruxClaim.FromClaims(principal.Claims);
-        _logger.LogInformation($"[JWT] Authentication successful. LoginId: {cruxClaim.LoginId}, Roles: {cruxClaim.Roles}");
+        _logger.LogInformation($"[JWT] 인가됨! LoginId: {cruxClaim.LoginId}, Roles: {cruxClaim.Roles}");
     }
 
     /// <summary>
     /// 유닉스 타임스탬프를 DateTime형식으로 변경
     /// </summary>
-    public static DateTime ConvertUnixTimeToDateTime(long unixTime)
+    private static DateTime ConvertUnixTimeToDateTime(long unixTime)
     {
         // 유닉스 에포크 (1970년 1월 1일 UTC)
         DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
