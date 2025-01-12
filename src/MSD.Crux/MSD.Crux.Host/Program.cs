@@ -12,6 +12,7 @@ using MSD.Crux.Core.IServices;
 using MSD.Crux.Infra.Repositories;
 using MSD.Crux.Infra.Repositories.Db;
 using MSD.Crux.Infra.Services;
+using MSD.Crux.Infra.Services.Default;
 using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -30,9 +31,11 @@ builder.Services.AddTransient<IDbConnection>(sp =>
 builder.Services.AddTransient<IEmployeeRepo, EmployeeRepoPsqlDb>();
 builder.Services.AddTransient<IUserRepo, UserRepoPsqlDb>();
 builder.Services.AddTransient<IVisionCumRepo, VisionCumRepoPsqlDb>();
+builder.Services.AddTransient<ILotRepo, LotRepoPsqlDb>();
 builder.Services.AddScoped<IEmployeeService, EmployeeService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IUserLoginService, UserLoginService>();
+builder.Services.AddScoped<ILotService, LotService>();
 // JWT 인증 설정
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
                                                                                         {
