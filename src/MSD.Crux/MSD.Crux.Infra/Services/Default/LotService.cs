@@ -2,13 +2,12 @@
 using MSD.Crux.Core.IServices;
 using MSD.Crux.Core.Models;
 
-namespace MSD.Crux.Infra.Services.Default
+namespace MSD.Crux.Infra.Services;
+
+public class LotService(ILotRepo _lotRepo) : ILotService
 {
-    public class LotService(ILotRepo _lotRepo) : ILotService
+    public async Task<List<Lot?>> GetAllCompletedLotsAsync()
     {
-        public async Task<List<Lot?>> GetAllCompletedLotsAsync()
-        {
-            return await _lotRepo.GetAllCompletedLotsAsync();
-        }
+        return await _lotRepo.GetAllCompletedLotsAsync();
     }
 }

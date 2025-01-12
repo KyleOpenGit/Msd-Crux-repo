@@ -1,20 +1,14 @@
-/*******************
- * Web Host Builder
- *******************/
-
 using System.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using MSD.Crux.API.Helpers;
 using MSD.Crux.Core.Helpers;
-using MSD.Crux.Core.IRepositories;
-using MSD.Crux.Core.IServices;
-using MSD.Crux.Infra.Repositories;
-using MSD.Crux.Infra.Repositories.Db;
-using MSD.Crux.Infra.Services;
-using MSD.Crux.Infra.Services.Default;
+using MSD.Crux.Shared;
 using Npgsql;
 
+/*******************
+ * Web Host Builder
+ *******************/
 var builder = WebApplication.CreateBuilder(args);
 
 /* DI Container **********************/
@@ -28,14 +22,10 @@ builder.Services.AddTransient<IDbConnection>(sp =>
                                                  string? connectionString = builder.Configuration.GetConnectionString("Postgres");
                                                  return new NpgsqlConnection(connectionString);
                                              });
-builder.Services.AddTransient<IEmployeeRepo, EmployeeRepoPsqlDb>();
-builder.Services.AddTransient<IUserRepo, UserRepoPsqlDb>();
-builder.Services.AddTransient<IVisionCumRepo, VisionCumRepoPsqlDb>();
-builder.Services.AddTransient<ILotRepo, LotRepoPsqlDb>();
-builder.Services.AddScoped<IEmployeeService, EmployeeService>();
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IUserLoginService, UserLoginService>();
-builder.Services.AddScoped<ILotService, LotService>();
+// Shared 확장 메서드로 서비스와 레포지토리를 등록
+builder.Services.AddCruxServicesAll();
+builder.Services.AddCruxRepositoriesAll();
+
 // JWT 인증 설정
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
                                                                                         {
@@ -45,9 +35,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
                                                                                                 ValidateAudience = true,
                                                                                                 ValidateLifetime = true,
                                                                                                 ValidateIssuerSigningKey = true,
-                                                                                                ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                                                                                                ValidAudience = builder.Configuration["Jwt:Audience"],
-                                                                                                IssuerSigningKey = JwtHelper.GetPublicKey(builder.Configuration)
+                                                                                                ValidIssuer =
+                                                                                                                                        builder.Configuration["Jwt:Issuer"],
+                                                                                                ValidAudience =
+                                                                                                                                        builder.Configuration["Jwt:Audience"],
+                                                                                                IssuerSigningKey =
+                                                                                                                                        JwtHelper
+                                                                                                                                            .GetPublicKey(builder.Configuration)
                                                                                             };
                                                                                         });
 
