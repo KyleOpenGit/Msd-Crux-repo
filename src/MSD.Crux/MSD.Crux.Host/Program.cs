@@ -10,9 +10,7 @@ using MSD.Crux.Core.Helpers;
 using MSD.Crux.Core.IRepositories;
 using MSD.Crux.Core.IServices;
 using MSD.Crux.Infra.Repositories;
-using MSD.Crux.Infra.Repositories.Db;
 using MSD.Crux.Infra.Services;
-using MSD.Crux.Infra.Services.Default;
 using Npgsql;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -45,9 +43,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
                                                                                                 ValidateAudience = true,
                                                                                                 ValidateLifetime = true,
                                                                                                 ValidateIssuerSigningKey = true,
-                                                                                                ValidIssuer = builder.Configuration["Jwt:Issuer"],
-                                                                                                ValidAudience = builder.Configuration["Jwt:Audience"],
-                                                                                                IssuerSigningKey = JwtHelper.GetPublicKey(builder.Configuration)
+                                                                                                ValidIssuer =
+                                                                                                                                        builder.Configuration["Jwt:Issuer"],
+                                                                                                ValidAudience =
+                                                                                                                                        builder.Configuration["Jwt:Audience"],
+                                                                                                IssuerSigningKey =
+                                                                                                                                        JwtHelper
+                                                                                                                                            .GetPublicKey(builder.Configuration)
                                                                                             };
                                                                                         });
 

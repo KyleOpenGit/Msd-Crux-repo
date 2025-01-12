@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using MSD.Crux.Core.IRepositories;
 using MSD.Crux.Core.IServices;
 using MSD.Crux.Infra.Repositories;
-using MSD.Crux.Infra.Repositories.Db;
 using MSD.Crux.Infra.Services;
 using MSD.Crux.StandAlone.TCP;
 using Npgsql;

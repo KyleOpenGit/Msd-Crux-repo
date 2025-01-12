@@ -2,9 +2,8 @@ using Microsoft.Extensions.DependencyInjection;
 using MSD.Crux.Core.IRepositories;
 using MSD.Crux.Core.IServices;
 using MSD.Crux.Infra.Repositories;
-using MSD.Crux.Infra.Repositories.Db;
 using MSD.Crux.Infra.Services;
-using MSD.Crux.Infra.Services.Default;
+
 
 namespace MSD.Crux.Shared;
 
@@ -20,7 +19,7 @@ public static class DiRegistrar
     /// <returns>의존성이 등록된 <see cref="IServiceCollection"/> 인스턴스</returns>
     public static IServiceCollection AddCruxServicesAll(this IServiceCollection services)
     {
-        //Cruex 서비스 계층 등록
+        //Crux 서비스 계층 등록
         services.AddScoped<IEmployeeService, EmployeeService>();
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IUserLoginService, UserLoginService>();
@@ -36,7 +35,7 @@ public static class DiRegistrar
     /// <returns>의존성이 등록된 <see cref="IServiceCollection"/> 인스턴스</returns>
     public static IServiceCollection AddCruxRepositoriesAll(this IServiceCollection services)
     {
-        // 레포지토리 계층 등록
+        // Crux 레포지토리 계층 등록
         services.AddTransient<IEmployeeRepo, EmployeeRepoPsqlDb>();
         services.AddTransient<IUserRepo, UserRepoPsqlDb>();
         services.AddTransient<IVisionCumRepo, VisionCumRepoPsqlDb>();
