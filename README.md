@@ -19,3 +19,6 @@ MSD Crux 서버앱에서 사용하는 RDBMS는 TimescaleDB 플러그인이 활�
 
 [DOCKER.md](./docs/DOCKER.md)(로컬 PC 개발환경에서 데이터베이스 사용) 내용을 확인하세요.
 
+
+# ■ 기타
+[install 폴더에대한 내용](./docs/INSTALL.md)도 참고해보세요.
