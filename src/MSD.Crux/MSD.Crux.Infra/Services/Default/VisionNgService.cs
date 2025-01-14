@@ -23,37 +23,39 @@ public class VisionNgService : IVisionNgService
         _visionNgRepo = visionNgRepo;
 
         // appsettings.json에서 이미지 저장 경로 가져오기
-        _basePath = GetOrCreateDirectory(configuration["ImageStorage:BasePath"], "~/MSD.Crux.Host/images");
+        _basePath = PathHelper.GetOrCreateDirectory(configuration["ImageStorage:BasePath"], "~/MSD.Crux.Host/images");
     }
 
     public async Task SaveVisionNgAsync(VisionNgReqDto request)
     {
-        string directoryPath = GetOrCreateDirectory(Path.Combine(_basePath, DateTime.UtcNow.ToString("yyyy/MM/dd")));
+        try
+        {
+            string filePath = await SaveImageAsync(_basePath, request.Img);
 
-        // 이미지 저장
-        string? fileName = $"{Guid.NewGuid()}.jpg";
-        string? filePath = Path.Combine(directoryPath, fileName);
-        await File.WriteAllBytesAsync(filePath, request.Img);
+            var visionNg = new VisionNg { LotId = request.LotId, LineId = request.LineId, DateTime = request.DateTime, NgLabel = request.NgLabel.ToString(), NgImgPath = filePath };
 
-        var visionNg = new VisionNg { LotId = request.LotId, LineId = request.LineId, DateTime = request.DateTime, NgLabel = request.NgLabel.ToString(), NgImgPath = filePath };
-
-        await _visionNgRepo.AddAsync(visionNg);
+            await _visionNgRepo.AddAsync(visionNg);
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException("Vision NG 데이터를 저장하는 중 오류가 발생했습니다.", ex);
+        }
     }
 
-    /// <summary>
-    /// 설정된 경로를 읽고 절대 경로로 변환하며, 디렉토리를 생성한다.
-    /// </summary>
-    /// <param name="path">설정된 경로</param>
-    /// <param name="defaultPath">기본값 경로</param>
-    /// <returns>절대 경로</returns>
-    private static string GetOrCreateDirectory(string? path, string defaultPath = "")
+    private async Task<string> SaveImageAsync(string basePath, byte[] img)
     {
-        string resolvedPath = PathHelper.ToAbsolutePath(path ?? defaultPath);
-
-        if (!Directory.Exists(resolvedPath))
+        try
         {
-            Directory.CreateDirectory(resolvedPath);
+            string directoryPath = PathHelper.GetOrCreateDirectory(Path.Combine(basePath, DateTime.UtcNow.ToString("yyyy/MM/dd")));
+            string fileName = $"{Guid.NewGuid()}.jpg";
+            string filePath = Path.Combine(directoryPath, fileName);
+
+            await File.WriteAllBytesAsync(filePath, img);
+            return filePath;
         }
-        return resolvedPath;
+        catch (Exception ex)
+        {
+            throw new IOException("이미지를 저장하는 중 오류가 발생했습니다.", ex);
+        }
     }
 }

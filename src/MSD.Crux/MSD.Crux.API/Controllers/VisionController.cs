@@ -32,9 +32,17 @@ public class VisionController : ControllerBase
             await _visionNgService.SaveVisionNgAsync(request);
             return Ok(new { message = "Vision NG 데이터 저장 성공" });
         }
+        catch (InvalidOperationException ex)
+        {
+            return StatusCode(500, new { message = ex.Message, details = ex.InnerException?.Message });
+        }
+        catch (IOException ex)
+        {
+            return StatusCode(500, new { message = ex.Message, details = ex.InnerException?.Message });
+        }
         catch (Exception ex)
         {
-            return StatusCode(500, new { message = $"오류 발생: {ex.Message}" });
+            return StatusCode(500, new { message = "알 수 없는 오류가 발생했습니다.", details = ex.Message });
         }
     }
 }
