@@ -4,7 +4,6 @@ using MSD.Crux.Core.IServices;
 using MSD.Crux.Infra.Repositories;
 using MSD.Crux.Infra.Services;
 
-
 namespace MSD.Crux.Shared;
 
 /// <summary>
@@ -24,6 +23,7 @@ public static class DiRegistrar
         services.AddScoped<IUserService, UserService>();
         services.AddScoped<IUserLoginService, UserLoginService>();
         services.AddScoped<ILotService, LotService>();
+        services.AddScoped<IVisionNgService, VisionNgService>();
         return services;
     }
 
@@ -40,6 +40,7 @@ public static class DiRegistrar
         services.AddTransient<IUserRepo, UserRepoPsqlDb>();
         services.AddTransient<IVisionCumRepo, VisionCumRepoPsqlDb>();
         services.AddTransient<ILotRepo, LotRepoPsqlDb>();
+        services.AddScoped<IVisionNgRepo, VisionNgRepoPsqlDb>();
         return services;
     }
 }
