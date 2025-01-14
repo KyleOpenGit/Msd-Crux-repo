@@ -26,4 +26,52 @@ public class LotRepoPsqlDb : ILotRepo
         var result = await _dbConnection.QueryAsync<Lot?>(query);
         return result.ToList();
     }
+
+    public async Task<Lot?> GetByIdAsync(string id)
+    {
+        const string query = "SELECT * FROM lot WHERE id = @Id";
+        return await _dbConnection.QuerySingleOrDefaultAsync<Lot>(query, new { Id = id });
+    }
+
+    public async Task<IEnumerable<Lot>> GetAllAsync()
+    {
+        const string query = "SELECT * FROM lot";
+        return await _dbConnection.QueryAsync<Lot>(query);
+    }
+
+    public async Task AddAsync(Lot lot)
+    {
+        const string query = @"
+            INSERT INTO lot (id, part_id, line_id, issued_time, qty, completed_qty, vision_line_ids, injection_start, injection_end, injection_worker, vision_start, vision_end, vision_worker, supplier, note)
+            VALUES (@Id, @PartId, @LineId, @IssuedTime, @Qty, @CompletedQty, @VisionLineIds, @InjectionStart, @InjectionEnd, @InjectionWorker, @VisionStart, @VisionEnd, @VisionWorker, @Supplier, @Note)";
+        await _dbConnection.ExecuteAsync(query, lot);
+    }
+
+    public async Task UpdateAsync(Lot lot)
+    {
+        const string query = @"
+            UPDATE lot
+            SET part_id = @PartId,
+                line_id = @LineId,
+                issued_time = @IssuedTime,
+                qty = @Qty,
+                completed_qty = @CompletedQty,
+                vision_line_ids = @VisionLineIds,
+                injection_start = @InjectionStart,
+                injection_end = @InjectionEnd,
+                injection_worker = @InjectionWorker,
+                vision_start = @VisionStart,
+                vision_end = @VisionEnd,
+                vision_worker = @VisionWorker,
+                supplier = @Supplier,
+                note = @Note
+            WHERE id = @Id";
+        await _dbConnection.ExecuteAsync(query, lot);
+    }
+
+    public async Task DeleteAsync(string id)
+    {
+        const string query = "DELETE FROM lot WHERE id = @Id";
+        await _dbConnection.ExecuteAsync(query, new { Id = id });
+    }
 }

@@ -1,9 +1,9 @@
 using System.IO;
 using Microsoft.Extensions.Configuration;
+using MSD.Crux.Common;
 using MSD.Crux.Core.IRepositories;
 using MSD.Crux.Core.IServices;
 using MSD.Crux.Core.Models;
-using MSD.Crux.Common;
 
 namespace MSD.Crux.Infra.Services;
 
