@@ -54,7 +54,6 @@ public class VisionNgService : IVisionNgService
 
             await _visionNgRepo.AddAsync(visionNg);
             return filePath;
-
         }
         catch (Exception ex)
         {
@@ -92,6 +91,40 @@ public class VisionNgService : IVisionNgService
                     NgImgBase64 = visionNg.NgImgPath != null ? Convert.ToBase64String(await File.ReadAllBytesAsync(visionNg.NgImgPath)) : null
                 });
             }
+        }
+
+        return results;
+    }
+
+    public async Task<List<VisionNgImgPathRspDto>> GetRecentNgByLineIdAsync(VisionNgImgPathReqDto request)
+    {
+        if (request.LineIds == null || !request.LineIds.Any())
+        {
+            throw new ArgumentException("라인 ID 목록이 비어있습니다.");
+        }
+
+        var results = new List<VisionNgImgPathRspDto>();
+
+        foreach (var lineId in request.LineIds)
+        {
+            var visionNgData = await _visionNgRepo.GetByLineIdAsync(lineId, request.Offset, request.Count);
+
+            var rspDto = new VisionNgImgPathRspDto
+            {
+                LineId = lineId,
+                VisionNgImages = visionNgData.Select(ng => new VisionNgImgRspDto
+                {
+                    Id = ng.Id,
+                    PartId = ng.PartId,
+                    LineId = ng.LineId,
+                    DateTime = ng.DateTime,
+                    NgLabel = ng.NgLabel,
+                    NgImgPath = ng.NgImgPath,
+                    NgImgBase64 = null // Base64는 null 고정
+                }).ToList()
+            };
+
+            results.Add(rspDto);
         }
 
         return results;

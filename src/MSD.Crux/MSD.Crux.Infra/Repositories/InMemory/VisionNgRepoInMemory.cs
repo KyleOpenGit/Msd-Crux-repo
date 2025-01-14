@@ -56,6 +56,14 @@ public class VisionNgRepoInMemory : IVisionNgRepo
         return Task.CompletedTask;
     }
 
+    public Task<IEnumerable<VisionNg>> GetByLineIdAsync(string lineId, int offset, int count)
+    {
+        var filtered = _visionNgData.Values.Where(ng => ng.LineId == lineId).OrderByDescending(ng => ng.DateTime) // 최신순 정렬
+                                    .Skip(offset).Take(count);
+
+        return Task.FromResult(filtered);
+    }
+
     private int GenerateNewId()
     {
         return Interlocked.Increment(ref _currentId);
