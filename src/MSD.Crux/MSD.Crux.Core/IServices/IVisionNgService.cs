@@ -9,7 +9,7 @@ public interface IVisionNgService
     /// </summary>
     /// <param name="visionNgReqDto">Vision NG 요청 데이터</param>
     /// <returns>비동기 작업 완료</returns>
-    Task SaveVisionNgAsync(VisionNgReqDto visionNgReqDto);
+    Task<string> SaveVisionNgAsync(VisionNgReqDto visionNgReqDto);
 
     /// <summary>
     /// ID 목록으로 Vision NG 데이터를 조회.

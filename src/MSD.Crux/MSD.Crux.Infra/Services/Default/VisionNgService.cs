@@ -28,7 +28,7 @@ public class VisionNgService : IVisionNgService
         _basePath = PathHelper.GetOrCreateDirectory(configuration["ImageStorage:BasePath"], "~/MSD.Crux.Host/images");
     }
 
-    public async Task SaveVisionNgAsync(VisionNgReqDto visionNgReqDto)
+    public async Task<string> SaveVisionNgAsync(VisionNgReqDto visionNgReqDto)
     {
         try
         {
@@ -53,6 +53,8 @@ public class VisionNgService : IVisionNgService
             };
 
             await _visionNgRepo.AddAsync(visionNg);
+            return filePath;
+
         }
         catch (Exception ex)
         {

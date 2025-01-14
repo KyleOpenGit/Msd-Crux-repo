@@ -29,8 +29,8 @@ public class VisionController : ControllerBase
 
         try
         {
-            await _visionNgService.SaveVisionNgAsync(request);
-            return Ok(new { message = "Vision NG 데이터 저장 성공" });
+            string savedFilePath = await _visionNgService.SaveVisionNgAsync(request);
+            return Ok(new { message = "Vision NG 데이터 저장 성공", savedFilePath });
         }
         catch (InvalidOperationException ex)
         {
