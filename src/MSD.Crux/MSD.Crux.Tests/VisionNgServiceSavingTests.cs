@@ -39,7 +39,7 @@ namespace MSD.Crux.Tests.Services
             _mockRepo = new Mock<IVisionNgRepo>();
 
             // IConfiguration 설정
-            Dictionary<string, string>? configData = new () { { "ImageStorage:BasePath", _testBasePath } };
+            Dictionary<string, string>? configData = new() { { "ImageStorage:BasePath", _testBasePath } };
             IConfigurationRoot? configuration = new ConfigurationBuilder().AddInMemoryCollection(configData).Build();
 
             // 서비스 초기화
@@ -51,7 +51,7 @@ namespace MSD.Crux.Tests.Services
         {
             // Arrange
             byte[] mockImageData = Convert.FromBase64String(Base64ImageData); // Base64 → 바이트 배열
-            VisionNgReqDto? requestDto = new () { LotId = "LOT123", LineId = "LINE01", DateTime = DateTime.UtcNow, NgLabel = NgType.Crack, Img = mockImageData };
+            VisionNgReqDto? requestDto = new() { LotId = "LOT123", LineId = "LINE01", DateTime = DateTime.UtcNow, NgLabel = NgType.Crack, Img = mockImageData };
 
             // Act
             await _service.SaveVisionNgAsync(requestDto);

@@ -1,9 +1,9 @@
 using System.IO;
 using Microsoft.Extensions.Configuration;
+using MSD.Crux.Common;
 using MSD.Crux.Core.IRepositories;
 using MSD.Crux.Core.IServices;
 using MSD.Crux.Core.Models;
-using MSD.Crux.Common;
 
 namespace MSD.Crux.Infra.Services;
 
@@ -13,26 +13,44 @@ namespace MSD.Crux.Infra.Services;
 public class VisionNgService : IVisionNgService
 {
     private readonly IVisionNgRepo _visionNgRepo;
+    private readonly ILotRepo _lotRepo;
     /// <summary>
-    /// 이미지 저장 베이스경로
+    /// 이미지 저장 베이스경로. appsettings 구성파일 "ImageStorage:BasePath" 키의 값
     /// </summary>
     private readonly string _basePath;
 
-    public VisionNgService(IVisionNgRepo visionNgRepo, IConfiguration configuration)
+    public VisionNgService(IVisionNgRepo visionNgRepo, ILotRepo lotRepo, IConfiguration configuration)
     {
         _visionNgRepo = visionNgRepo;
+        _lotRepo = lotRepo;
 
         // appsettings.json에서 이미지 저장 경로 가져오기
         _basePath = PathHelper.GetOrCreateDirectory(configuration["ImageStorage:BasePath"], "~/MSD.Crux.Host/images");
     }
 
-    public async Task SaveVisionNgAsync(VisionNgReqDto request)
+    public async Task SaveVisionNgAsync(VisionNgReqDto visionNgReqDto)
     {
         try
         {
-            string filePath = await SaveImageAsync(_basePath, request.Img);
+            // Lot 정보를 조회하여 part_id 가져오기
+            var lot = await _lotRepo.GetByIdAsync(visionNgReqDto.LotId);
+            if (lot == null)
+            {
+                throw new InvalidOperationException($"LotId '{visionNgReqDto.LotId}'에 해당하는 데이터를 찾을 수 없습니다.");
+            }
 
-            var visionNg = new VisionNg { LotId = request.LotId, LineId = request.LineId, DateTime = request.DateTime, NgLabel = request.NgLabel.ToString(), NgImgPath = filePath };
+            string filePath = await SaveImageAsync(_basePath, visionNgReqDto.Img);
+
+            // Vision NG 데이터 생성
+            var visionNg = new VisionNg
+            {
+                LotId = visionNgReqDto.LotId,
+                PartId = lot.PartId,
+                LineId = visionNgReqDto.LineId,
+                DateTime = visionNgReqDto.DateTime,
+                NgLabel = visionNgReqDto.NgLabel.ToString(),
+                NgImgPath = filePath
+            };
 
             await _visionNgRepo.AddAsync(visionNg);
         }
@@ -42,6 +60,13 @@ public class VisionNgService : IVisionNgService
         }
     }
 
+    /// <summary>
+    /// 제공된 이미지 byte 데이터를 년월일 경로와 GUID로된 이름의 jpg 파일로 저장하고 그 경로를 반환한다ㅏ.
+    /// </summary>
+    /// <param name="basePath"></param>
+    /// <param name="img">저장할 이미지 데이터</param>
+    /// <returns>이미지 저장 절대경로</returns>
+    /// <exception cref="IOException">이미지 저장 I/O 바운드 작업 오류시 예외</exception>
     private async Task<string> SaveImageAsync(string basePath, byte[] img)
     {
         try
