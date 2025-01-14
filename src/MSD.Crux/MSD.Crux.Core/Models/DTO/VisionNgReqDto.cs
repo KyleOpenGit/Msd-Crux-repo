@@ -1,5 +1,11 @@
+using System.Text.Json.Serialization;
+
 namespace MSD.Crux.Core.Models;
 
+/// <summary>
+/// 요청 DTO. 이미지저장
+/// </summary>
+/// <remarks>POST: /api/vision/ng</remarks>
 public class VisionNgReqDto
 {
     public string LotId { get; set; }
@@ -8,6 +14,7 @@ public class VisionNgReqDto
     /// <summary>
     /// 불량 타입 (AI 트레이닝 Label)
     /// </summary>
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public NgType NgLabel { get; set; }
     /// <summary>
     ///  바이트 배열 이미지 데이터
