@@ -60,6 +60,41 @@ public class VisionNgService : IVisionNgService
         }
     }
 
+    public async Task<List<VisionNgImgRspDto>> GetNgImgDataByIdsAsync(IEnumerable<int> ids)
+    {
+        if (ids == null || !ids.Any())
+        {
+            throw new ArgumentException("ID 목록이 비어있습니다.");
+        }
+
+        if (ids.Count() > 10)
+        {
+            throw new ArgumentException("최대 요청 가능한 ID 개수는 10개입니다.");
+        }
+
+        List<VisionNgImgRspDto>? results = new List<VisionNgImgRspDto>();
+
+        foreach (int id in ids)
+        {
+            VisionNg? visionNg = await _visionNgRepo.GetByIdAsync(id);
+            if (visionNg != null)
+            {
+                results.Add(new VisionNgImgRspDto
+                {
+                    Id = visionNg.Id,
+                    PartId = visionNg.PartId,
+                    LineId = visionNg.LineId,
+                    DateTime = visionNg.DateTime,
+                    NgLabel = visionNg.NgLabel,
+                    NgImgPath = visionNg.NgImgPath,
+                    NgImgBase64 = visionNg.NgImgPath != null ? Convert.ToBase64String(await File.ReadAllBytesAsync(visionNg.NgImgPath)) : null
+                });
+            }
+        }
+
+        return results;
+    }
+
     /// <summary>
     /// 제공된 이미지 byte 데이터를 년월일 경로와 GUID로된 이름의 jpg 파일로 저장하고 그 경로를 반환한다ㅏ.
     /// </summary>
