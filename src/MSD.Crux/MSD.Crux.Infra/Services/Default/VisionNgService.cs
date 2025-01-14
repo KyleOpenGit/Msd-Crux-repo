@@ -28,7 +28,7 @@ public class VisionNgService : IVisionNgService
         _basePath = PathHelper.GetOrCreateDirectory(configuration["ImageStorage:BasePath"], "~/MSD.Crux.Host/images");
     }
 
-    public async Task SaveVisionNgAsync(VisionNgReqDto visionNgReqDto)
+    public async Task<string> SaveVisionNgAsync(VisionNgReqDto visionNgReqDto)
     {
         try
         {
@@ -53,11 +53,48 @@ public class VisionNgService : IVisionNgService
             };
 
             await _visionNgRepo.AddAsync(visionNg);
+            return filePath;
+
         }
         catch (Exception ex)
         {
             throw new InvalidOperationException("Vision NG 데이터를 저장하는 중 오류가 발생했습니다.", ex);
         }
+    }
+
+    public async Task<List<VisionNgImgRspDto>> GetNgImgDataByIdsAsync(IEnumerable<int> ids)
+    {
+        if (ids == null || !ids.Any())
+        {
+            throw new ArgumentException("ID 목록이 비어있습니다.");
+        }
+
+        if (ids.Count() > 10)
+        {
+            throw new ArgumentException("최대 요청 가능한 ID 개수는 10개입니다.");
+        }
+
+        List<VisionNgImgRspDto>? results = new List<VisionNgImgRspDto>();
+
+        foreach (int id in ids)
+        {
+            VisionNg? visionNg = await _visionNgRepo.GetByIdAsync(id);
+            if (visionNg != null)
+            {
+                results.Add(new VisionNgImgRspDto
+                {
+                    Id = visionNg.Id,
+                    PartId = visionNg.PartId,
+                    LineId = visionNg.LineId,
+                    DateTime = visionNg.DateTime,
+                    NgLabel = visionNg.NgLabel,
+                    NgImgPath = visionNg.NgImgPath,
+                    NgImgBase64 = visionNg.NgImgPath != null ? Convert.ToBase64String(await File.ReadAllBytesAsync(visionNg.NgImgPath)) : null
+                });
+            }
+        }
+
+        return results;
     }
 
     /// <summary>
