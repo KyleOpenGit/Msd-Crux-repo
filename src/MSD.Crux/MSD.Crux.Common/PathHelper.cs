@@ -35,4 +35,23 @@ public static class PathHelper
                    ? path // 이미 절대 경로인 경우 그대로 반환
                    : Path.Combine(AppContext.BaseDirectory, path);
     }
+
+
+    /// <summary>
+    /// 설정된 경로를 읽고 절대 경로로 변환하며, 디렉토리를 생성한다.
+    /// </summary>
+    /// <param name="path">설정된 경로</param>
+    /// <param name="defaultPath">기본값 경로</param>
+    /// <returns>절대 경로</returns>
+    public static string GetOrCreateDirectory(string? path, string defaultPath = "")
+    {
+        string resolvedPath = PathHelper.ToAbsolutePath(path ?? defaultPath);
+
+        if (!Directory.Exists(resolvedPath))
+        {
+            Directory.CreateDirectory(resolvedPath);
+        }
+
+        return resolvedPath;
+    }
 }
