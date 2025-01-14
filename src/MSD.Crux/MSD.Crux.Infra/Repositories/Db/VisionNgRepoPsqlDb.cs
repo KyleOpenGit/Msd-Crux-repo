@@ -13,10 +13,10 @@ public class VisionNgRepoPsqlDb(IDbConnection _dbConnection) : IVisionNgRepo
     public async Task AddAsync(VisionNg visionNg)
     {
         const string query = @"
-                INSERT INTO vision_ng (lot_id, line_id, date_time, ng_label, ng_img_path)
-                VALUES (@LotId, @LineId, @DateTime, @NgLabel, @NgImgPath)";
+                INSERT INTO vision_ng (lot_id, part_id, line_id, date_time, ng_label, ng_img_path)
+                VALUES (@LotId, @PartId, @LineId, @DateTime, @NgLabel, @NgImgPath)";
 
-        await _dbConnection.ExecuteAsync(query, new { visionNg.LotId, visionNg.LineId, visionNg.DateTime, visionNg.NgLabel, visionNg.NgImgPath });
+        await _dbConnection.ExecuteAsync(query, new { visionNg.LotId, visionNg.PartId, visionNg.LineId, visionNg.DateTime, visionNg.NgLabel, visionNg.NgImgPath });
     }
 
     public async Task<VisionNg?> GetByIdAsync(int id)
