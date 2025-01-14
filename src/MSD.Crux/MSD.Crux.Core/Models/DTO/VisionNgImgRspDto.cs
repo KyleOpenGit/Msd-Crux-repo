@@ -1,8 +1,9 @@
 namespace MSD.Crux.Core.Models;
 
 /// <summary>
-/// 불량품 응답 DTO : /api/vision/ng/images?ids={쉼표구분id문자열}
+/// 불량품 응답 DTO
 /// </summary>
+/// <remarks>/api/vision/ng/images?ids={쉼표구분id문자열}</remarks>
 public class VisionNgImgRspDto
 {
     /// <summary>

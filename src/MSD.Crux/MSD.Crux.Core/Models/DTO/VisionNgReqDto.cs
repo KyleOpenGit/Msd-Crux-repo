@@ -2,6 +2,10 @@ using System.Text.Json.Serialization;
 
 namespace MSD.Crux.Core.Models;
 
+/// <summary>
+/// 요청 DTO. 이미지저장
+/// </summary>
+/// <remarks>POST: /api/vision/ng</remarks>
 public class VisionNgReqDto
 {
     public string LotId { get; set; }

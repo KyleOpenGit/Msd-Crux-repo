@@ -25,6 +25,18 @@ public class VisionNgRepoPsqlDb(IDbConnection _dbConnection) : IVisionNgRepo
         return await _dbConnection.QuerySingleOrDefaultAsync<VisionNg>(query, new { Id = id });
     }
 
+    public async Task<IEnumerable<VisionNg>> GetByLineIdAsync(string lineId, int offset, int count)
+    {
+        const string query = @"
+            SELECT *
+            FROM vision_ng
+            WHERE line_id = @LineId
+            ORDER BY date_time DESC
+            LIMIT @Count OFFSET @Offset";
+
+        return await _dbConnection.QueryAsync<VisionNg>(query, new { LineId = lineId, Offset = offset, Count = count });
+    }
+
     public async Task<IEnumerable<VisionNg>> GetAllAsync()
     {
         const string query = "SELECT * FROM vision_ng";

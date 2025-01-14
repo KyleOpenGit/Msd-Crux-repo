@@ -22,6 +22,15 @@ public interface IVisionNgRepo
     Task<VisionNg?> GetByIdAsync(int id);
 
     /// <summary>
+    ///   line_id에 해당하는 Vision NG 데이터 목록 조회 (최신역순)
+    /// </summary>
+    /// <param name="lineId">라인 ID </param>
+    /// <param name="offset">오프셋</param>
+    /// <param name="count">목록 갯수</param>
+    /// <returns></returns>
+    Task<IEnumerable<VisionNg>> GetByLineIdAsync(string lineId, int offset, int count);
+
+    /// <summary>
     /// 모든 Vision NG 데이터를 조회
     /// </summary>
     /// <returns>Vision NG 데이터 리스트</returns>

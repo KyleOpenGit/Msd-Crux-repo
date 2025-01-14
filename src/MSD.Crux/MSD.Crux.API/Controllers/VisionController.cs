@@ -78,4 +78,32 @@ public class VisionController : ControllerBase
             return StatusCode(500, new { message = "알 수 없는 오류가 발생했습니다.", details = ex.Message });
         }
     }
+
+    /// <summary>
+    /// 라인id로 최근불량 데이터와 이미지 path 가져오기 (목록, 역순)
+    /// </summary>
+    /// <param name="request">VisionNgImgByLineIdsReqDto</param>
+    /// <returns>요청된 라인ID 별 불량 정보. 이미지 데이터는 제외</returns>
+    [HttpPost("ng/images")]
+    public async Task<IActionResult> GetRecentNgByIds([FromBody] VisionNgImgPathReqDto request)
+    {
+        if (!ModelState.IsValid)
+        {
+            return BadRequest(ModelState);
+        }
+
+        try
+        {
+            var results = await _visionNgService.GetRecentNgByLineIdAsync(request);
+            return Ok(results);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, new { message = "알 수 없는 오류가 발생했습니다.", details = ex.Message });
+        }
+    }
 }
