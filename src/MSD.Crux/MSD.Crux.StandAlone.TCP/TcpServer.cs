@@ -13,9 +13,9 @@ using MSD.Crux.Core.Models;
 namespace MSD.Crux.StandAlone.TCP;
 
 /// <summary>
-/// 백그라운드 프로세스로 TCP 소켓서버를 열고 리스닝.
+/// 백그라운드 프로세스로 TCP 소켓서버를 열고 연결을 기다리며 .
 /// </summary>
-/// <remarks>IHostedService 구현체  BackgroundService(기본제공)를 상속받은 클래스 저의</remarks>
+/// <remarks>IHostedService 구현체  BackgroundService(기본제공)를 상속받은 클래스 구현</remarks>
 public class TcpServer : BackgroundService
 {
     private readonly int _port;
@@ -41,20 +41,22 @@ public class TcpServer : BackgroundService
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        // 지정된 포트에서 클라이언트의 연결을 기다린다.
         TcpListener? listener = new(IPAddress.Any, _port);
         listener.Start();
         _logger.LogInformation($"TCP 소켓 서버 실행. 포트넘버: {_port}");
 
-        // TCP 소켓통신 예시
+        // 클라이언트 연결.
         try
         {
             while (!stoppingToken.IsCancellationRequested)
             {
+                //pending 중인 클라이언트의 연결을 수락하고 각 연결마다 TcpClient 객체 생성.
                 TcpClient? client = await listener.AcceptTcpClientAsync(stoppingToken);
-                _logger.LogInformation("Client connected");
+                _logger.LogInformation("New Client connected");
 
-                // 별도의 태스크에서 소켓 클라이언트 핸들링
-                _ = HandleClientAsync(client, stoppingToken);
+                // Task를 await 없이 비동기적으로 실행해서 다음 pending 중인 연결을 곧바로 수락할수 있도록 한다.
+                _ = ProcessClientStreamAsync(client, stoppingToken);
             }
         }
         catch (Exception ex)
@@ -68,33 +70,41 @@ public class TcpServer : BackgroundService
     }
 
     /// <summary>
-    /// 연결된 TCP 클라이언트와의 통신을 처리
+    /// 연결된  클라이언트로부터의 데이터 스트림을 비동기적으로 처리.
     /// </summary>
     /// <param name="client">연결된 클라이언트를 나타내는 <see cref="TcpClient"/> 인스턴스.</param>
-    /// <param name="stoppingToken">통신 루프를 중지할 때 사용되는 <see cref="CancellationToken"/>.</param>
+    /// <param name="stoppingToken">데이터 스트림 루프를 중지할 때 사용할 <see cref="CancellationToken"/>.</param>
     /// <returns>비동기 작업을 나타내는 <see cref="Task"/>.</returns>
     /// <remarks>
     /// 클라이언트로부터 데이터를 읽고, 레포지토리에 저장한다.
     /// 클라이언트가 연결을 종료하거나 중지 토큰이 호출되면 연결이 종료.
     /// </remarks>
+    /// <remarks>
+    /// 이 메서드는 다음의 역할을 수행:
+    /// - 클라이언트가 보낸 데이터를 읽고 커스텀 TCP 프로토콜을 기반으로 메시지 헤더와 페이로드를 구분하여 파싱.
+    /// - 헤더의 FrameType에 따라 JWT 검증 및 Payload Data를 데이터베이스에 insert.
+    /// - 필요한 경우 클라이언트에 적절한 응답을 전송
+    /// - 클라이언트 연결이 끊기거나 예외가 발생하면 연결 종료.
+    ///
+    /// 이 메서드는 비동기로 실행되며, 각 클라이언트 연결마다 독립적으로 동작한다.
+    /// </remarks>
     /// <exception cref="Exception">통신 중 발생한 예외는 로그로 기록.</exception>
-    private async Task HandleClientAsync(TcpClient client, CancellationToken stoppingToken)
+    private async Task ProcessClientStreamAsync(TcpClient client, CancellationToken stoppingToken)
     {
+        // 클라이언트 연결에대한 데이터 송수신 스트림
         await using var networkStream = client.GetStream();
+        // 커스텀 TCP 프로토콜 frame을 위한 버퍼 크기. 헤더+payload(JWT 토큰 문자열)을 충분히 담을 수 있는 크기.
         byte[] buffer = new byte[1024];
 
+        //연결되어있는동안 네트워크 스트림을 읽어서 처리
         try
         {
-            _logger.LogInformation("Client connection initiated for streaming.");
-
             while (!stoppingToken.IsCancellationRequested && client.Connected)
             {
                 // 헤더 읽기 (6바이트)
                 byte[] headerBuffer = new byte[6];
-                // 클라이언트로부터 데이터 수신 (연결 상태 확인)
+                // 스트림 데이터를 읽어서 headerBuffer에 넣으면서, 읽은 데이터 길이가 0이면 연결을 종료한다.
                 int headerBytesRead = await networkStream.ReadAsync(headerBuffer, 0, headerBuffer.Length, stoppingToken);
-
-
                 if (headerBytesRead == 0)
                 {
                     // 클라이언트 연결 종료
@@ -135,14 +145,11 @@ public class TcpServer : BackgroundService
                 string responseMessage = "Data received successfully";
                 byte[] responseBytes = Encoding.ASCII.GetBytes(responseMessage);
                 await networkStream.WriteAsync(responseBytes, 0, responseBytes.Length, stoppingToken);
-
-                // 1초 대기
-                await Task.Delay(1000, stoppingToken);
             }
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "스트리밍 중 에러 발생");
+            _logger.LogError(ex, "클라이언트 데이터 스트림 처리 중 에러 발생");
         }
         finally
         {
