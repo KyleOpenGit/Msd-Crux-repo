@@ -33,7 +33,8 @@ IHost? host = Host.CreateDefaultBuilder(args)
                                                                                        sp.GetRequiredService<ILogger<TcpServer>>(),
                                                                                        sp.GetRequiredService<IUserRepo>(),
                                                                                        configuration: configuration,
-                                                                                       sp.GetRequiredService<IVisionCumRepo>()));
+                                                                                       sp.GetRequiredService<IVisionCumRepo>(),
+                                                                                       sp.GetRequiredService<IInjectionCumRepo>()));
 
                                          // Npgsql을 이용한 DB 커넥션
                                          services.AddTransient<IDbConnection>(sp =>

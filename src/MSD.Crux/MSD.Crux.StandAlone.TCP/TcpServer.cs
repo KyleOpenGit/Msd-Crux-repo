@@ -24,6 +24,7 @@ public class TcpServer : BackgroundService
     private readonly IUserRepo _userRepo;
     private readonly IConfiguration _configuration;
     private readonly IVisionCumRepo _visionCumRepo;
+    private readonly IInjectionCumRepo _injectionCumRepo;
 
     /// <summary>
     /// 생성자. 객체 생성시 DIC 에 등록된 객체들이 매개변수를 통해 주입된다.
@@ -31,13 +32,14 @@ public class TcpServer : BackgroundService
     /// <param name="port">DI로 주입되는 포트 넘버</param>
     /// <param name="logger">DI로 주입되는 ILogger 구현체 객체</param>
     /// <param name="userRepo">DI로 주입되는 MSD.Crux.Core 레포지토리 인터페이스를 구현한 객체(MSD.Crux.Infra.UserRepoPsqlDb)</param>
-    public TcpServer(int port, ILogger<TcpServer> logger, IUserRepo userRepo, IConfiguration configuration, IVisionCumRepo visionCumRepo)
+    public TcpServer(int port, ILogger<TcpServer> logger, IUserRepo userRepo, IConfiguration configuration, IVisionCumRepo visionCumRepo, IInjectionCumRepo injectionCumRepo)
     {
         _port = port;
         _logger = logger;
         _userRepo = userRepo;
         _configuration = configuration;
         _visionCumRepo = visionCumRepo;
+        _injectionCumRepo = injectionCumRepo;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -220,7 +222,15 @@ public class TcpServer : BackgroundService
         switch (frameType)
         {
             case FrameType.Injection:
-                //TODO injection_cum Repository code
+                await _injectionCumRepo.AddInjectionCumAsync(new InjectionCum
+                                                             {
+                                                                 LineId = payload.LineId,
+                                                                 Time = ConvertUnixTimeToDateTime(payload.Time),
+                                                                 LotId = payload.LotId,
+                                                                 Shift = payload.Shift,
+                                                                 EmployeeNumber = payload.EmployeeNumber,
+                                                                 Total = payload.Total
+                                                             });
                 break;
             case FrameType.Vision:
                 await _visionCumRepo.AddVisionCumAsync(new VisionCum
@@ -232,8 +242,6 @@ public class TcpServer : BackgroundService
                                                            EmployeeNumber = payload.EmployeeNumber,
                                                            Total = payload.Total
                                                        });
-                break;
-            default:
                 break;
         }
 

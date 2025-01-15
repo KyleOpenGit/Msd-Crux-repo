@@ -39,6 +39,7 @@ public static class DiRegistrar
         services.AddTransient<IEmployeeRepo, EmployeeRepoPsqlDb>();
         services.AddTransient<IUserRepo, UserRepoPsqlDb>();
         services.AddTransient<IVisionCumRepo, VisionCumRepoPsqlDb>();
+        services.AddTransient<IInjectionCumRepo, InjectionCumRepoPsqlDb>();
         services.AddTransient<ILotRepo, LotRepoPsqlDb>();
         services.AddScoped<IVisionNgRepo, VisionNgRepoPsqlDb>();
         return services;
