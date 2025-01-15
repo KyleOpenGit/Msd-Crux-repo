@@ -213,12 +213,12 @@ public class TcpServer : BackgroundService
     {
         VpbusFramePayload payload = new()
         {
-            LineId = Encoding.ASCII.GetString(payloadBuffer, 0, 4),
+            LineId = Encoding.ASCII.GetString(payloadBuffer, 0, 4).TrimEnd('\0'),
             Time = BitConverter.ToInt64(payloadBuffer, 4),
             LotId = Encoding.ASCII.GetString(payloadBuffer, 12, 20).TrimEnd('\0'),
-            Shift = Encoding.ASCII.GetString(payloadBuffer, 32, 4).TrimEnd('\0'),
+            Shift = Encoding.ASCII.GetString(payloadBuffer, 32, 4).TrimEnd('\0', ' '),
             EmployeeNumber = BitConverter.ToInt32(payloadBuffer, 36),
-            Total = BitConverter.ToInt32(payloadBuffer, 46)
+            Total = BitConverter.ToInt32(payloadBuffer, 40) // 수정: Total의 시작 위치를 40으로
         };
 
         switch (frameType)
