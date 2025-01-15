@@ -24,6 +24,7 @@ public static class DiRegistrar
         services.AddScoped<IUserLoginService, UserLoginService>();
         services.AddScoped<ILotService, LotService>();
         services.AddScoped<IVisionNgService, VisionNgService>();
+        services.AddScoped<ICalendarService, CalendarService>();
         return services;
     }
 
