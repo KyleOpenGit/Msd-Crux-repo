@@ -9,6 +9,7 @@ using Microsoft.Extensions.Logging;
 using MSD.Crux.Common;
 using MSD.Crux.Core.IRepositories;
 using MSD.Crux.Core.Models;
+using MSD.Crux.Core.Models.TCP;
 
 namespace MSD.Crux.StandAlone.TCP;
 
@@ -93,17 +94,15 @@ public class TcpServer : BackgroundService
     {
         // 클라이언트 연결에대한 데이터 송수신 스트림
         await using var networkStream = client.GetStream();
-        // 커스텀 TCP 프로토콜 frame을 위한 버퍼 크기. 헤더+payload(JWT 토큰 문자열)을 충분히 담을 수 있는 크기.
-        byte[] buffer = new byte[1024];
 
         //연결되어있는동안 네트워크 스트림을 읽어서 처리
         try
         {
             while (!stoppingToken.IsCancellationRequested && client.Connected)
             {
-                // 헤더 읽기 (6바이트)
+                // 헤더 용 버퍼.커스텀 TCP 프로토콜 frame의 헤더만을을 위한 길이 공간 버퍼.
                 byte[] headerBuffer = new byte[6];
-                // 스트림 데이터를 읽어서 headerBuffer에 넣으면서, 읽은 데이터 길이가 0이면 연결을 종료한다.
+                // 스트림 데이터를 6바이트만큼만 읽어서 headerBuffer에 넣고, 읽은 데이터 길이가 0이면 연결을 종료한다.
                 int headerBytesRead = await networkStream.ReadAsync(headerBuffer, 0, headerBuffer.Length, stoppingToken);
                 if (headerBytesRead == 0)
                 {
@@ -112,38 +111,52 @@ public class TcpServer : BackgroundService
                     break;
                 }
 
-                // 헤더 파싱
-                byte frameType = headerBuffer[0];
-                ushort messageLength = BitConverter.ToUInt16(headerBuffer, 1); // 2바이트 읽기
-                byte messageVersion = headerBuffer[3];
-                byte role = headerBuffer[4];
-                byte reserved = headerBuffer[5];
+                //헤더 파싱
+                VpbusFrameHeader frameHeader = new()
+                                               {
+                                                   //[0]번 인덱스
+                                                   FrameType = Enum.IsDefined(typeof(FrameType), headerBuffer[0])
+                                                                   ? (FrameType)headerBuffer[0]
+                                                                   : throw new InvalidOperationException($"Invalid FrameType: {headerBuffer[0]}"),
+                                                   //[1],[2]번 인덱스 2 바이트
+                                                   MessageLength = BitConverter.ToUInt16(headerBuffer, 1),
+                                                   //[3]번 인덱스
+                                                   MessageVersion = headerBuffer[3],
+                                                   //[4]번 인덱스
+                                                   Role = headerBuffer[4],
+                                               };
 
-                // 로그 출력
-                _logger.LogInformation($"[HEADER] FrameType: {frameType}, MessageLength: {messageLength}, MessageVersion: {messageVersion}, Role: {role}");
+
                 // 페이로드 읽기
-                byte[] payloadBuffer = new byte[messageLength];
+                //networkStream에서 앞서 마지막으로 읽은 다음 데이터(스트림의 현재 위치)부터 버퍼 길이 만큼 읽어 버퍼의 0번 인덱스부터 채운다.
+                //읽은 바이트 수가 0이면 연결끊김(종료)
+                byte[] payloadBuffer = new byte[frameHeader.MessageLength];
                 int payloadBytesRead = await networkStream.ReadAsync(payloadBuffer, 0, payloadBuffer.Length, stoppingToken);
-
                 if (payloadBytesRead == 0)
                 {
                     _logger.LogInformation("Client disconnected during payload read.");
                     break;
                 }
 
-                if (frameType == 1)
+                switch (frameHeader.FrameType)
                 {
-                    HandleJWT(payloadBuffer);
-                }
-                else if (frameType == 2)
-                {
-                    VisionCum visinoCum = HandlePayload(payloadBuffer);
-                    await _visionCumRepo.AddVisionCumAsync(visinoCum);
+                    case FrameType.Jwt:
+                        await ParseLineJwtTypePayloadAsync(payloadBuffer);
+                        break;
+                    case FrameType.Injection:
+                        await ParseCumTypePayloadAsync(FrameType.Injection, payloadBuffer);
+                        break;
+                    case FrameType.Vision:
+                        await ParseCumTypePayloadAsync(FrameType.Vision, payloadBuffer);
+                        break;
+                    default:
+                        break;
                 }
 
                 // 응답 전송
-                string responseMessage = "Data received successfully";
+                string responseMessage = "Succeeded";
                 byte[] responseBytes = Encoding.ASCII.GetBytes(responseMessage);
+                //TODO: await 필요성 재고
                 await networkStream.WriteAsync(responseBytes, 0, responseBytes.Length, stoppingToken);
             }
         }
@@ -158,28 +171,44 @@ public class TcpServer : BackgroundService
         }
     }
 
-    /// <summary>
-    /// FrameType 값이 2일 때 payload를 파싱
-    /// </summary>
-    private VisionCum HandlePayload(byte[] payload)
+    private async Task ParseCumTypePayloadAsync(FrameType frameType, byte[] payloadBuffer)
     {
-        string lineId = Encoding.ASCII.GetString(payload, 0, 4).TrimEnd('\0');
-        long time = BitConverter.ToInt64(payload, 4);
-        string lotId = Encoding.ASCII.GetString(payload, 12, 20).TrimEnd('\0');
-        string shift = Encoding.ASCII.GetString(payload, 32, 4).TrimEnd('\0');
-        long employeeNumber = BitConverter.ToInt64(payload, 36);
-        int total = BitConverter.ToInt32(payload, 46);
+        VpbusFramePayload payload = new()
+                                    {
+                                        LineId = Encoding.ASCII.GetString(payloadBuffer, 0, 4),
+                                        Time = BitConverter.ToInt64(payloadBuffer, 4),
+                                        LotId = Encoding.ASCII.GetString(payloadBuffer, 12, 20).TrimEnd('\0'),
+                                        Shift = Encoding.ASCII.GetString(payloadBuffer, 32, 4).TrimEnd('\0'),
+                                        EmployeeNumber = BitConverter.ToInt32(payloadBuffer, 36),
+                                        Total = BitConverter.ToInt32(payloadBuffer, 46)
+                                    };
 
-        _logger.LogInformation($"[PAYLOAD] LineId: {lineId}, Time: {time}, LotId: {lotId}, Shift: {shift}, EmployeeNumber: {employeeNumber}, Total: {total}");
-        return new VisionCum { LineId = lineId, Time = ConvertUnixTimeToDateTime(time), LotId = lotId, Shift = shift, EmployeeNumber = (int)employeeNumber, Total = total };
+        switch (frameType)
+        {
+            case FrameType.Injection:
+                //TODO injection_cum Repository code
+                break;
+            case FrameType.Vision:
+                await _visionCumRepo.AddVisionCumAsync(new VisionCum
+                                                       {
+                                                           LineId = payload.LineId,
+                                                           Time = ConvertUnixTimeToDateTime(payload.Time),
+                                                           LotId = payload.LotId,
+                                                           Shift = payload.Shift,
+                                                           EmployeeNumber = payload.EmployeeNumber,
+                                                           Total = payload.Total
+                                                       });
+                break;
+            default:
+                break;
+        }
+
+        return;
     }
 
-    /// <summary>
-    /// FrameType 값이 1일 때 payload를 파싱
-    /// </summary>
-    private void HandleJWT(byte[] payload)
+    private async Task ParseLineJwtTypePayloadAsync(byte[] payloadBuffer)
     {
-        string jwtToken = Encoding.ASCII.GetString(payload).TrimEnd('\0');
+        string jwtToken = Encoding.ASCII.GetString(payloadBuffer).TrimEnd('\0');
 
         // JWT 유효성 검증
         ClaimsPrincipal? principal = JwtHelper.ValidateToken(jwtToken, _configuration);
