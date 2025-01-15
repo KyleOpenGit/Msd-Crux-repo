@@ -27,7 +27,7 @@ public class InjectionCum
     /// 작업자 사원번호.
     /// </summary>
     /// <remarks>employee 테이블의 year + gender + sequence</remarks>
-    public string? EmployeeNumber { get; set; }
+    public int? EmployeeNumber { get; set; }
     /// <summary>
     /// 누적 생산량
     /// </summary>
