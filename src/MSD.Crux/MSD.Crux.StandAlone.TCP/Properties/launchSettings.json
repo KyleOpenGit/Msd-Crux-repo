@@ -5,14 +5,8 @@
             "commandName": "Project",
             "dotnetRunMessages": true,
             "environmentVariables": {
-                "ASPNETCORE_ENVIRONMENT": "Local"
-            }
-        },
-        "Production": {
-            "commandName": "Project",
-            "dotnetRunMessages": true,
-            "environmentVariables": {
-                "ASPNETCORE_ENVIRONMENT": "Local"
+                "ASPNETCORE_ENVIRONMENT": "Local",
+                "PORT": "51900"
             }
         }
     }
