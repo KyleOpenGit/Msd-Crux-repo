@@ -12,5 +12,10 @@
         <HintPath>..\..\..\..\..\..\..\..\..\..\..\..\..\usr\local\share\dotnet\shared\Microsoft.AspNetCore.App\8.0.8\Microsoft.Extensions.Configuration.Abstractions.dll</HintPath>
       </Reference>
     </ItemGroup>
+  
+
+    <ItemGroup>
+      <ProjectReference Include="..\MSD.Crux.Common\MSD.Crux.Common.csproj" />
+    </ItemGroup>
 
 </Project>
