@@ -101,15 +101,13 @@ public class TcpServer : BackgroundService
             while (!stoppingToken.IsCancellationRequested && client.Connected)
             {
                 // 헤더 용 버퍼.커스텀 TCP 프로토콜 frame의 헤더만을을 위한 길이 공간 버퍼.
-                byte[] headerBuffer = new byte[6];
                 // 스트림 데이터를 6바이트만큼만 읽어서 headerBuffer에 넣고, 읽은 데이터 길이가 0이면 연결을 종료한다.
-                int headerBytesRead = await networkStream.ReadAsync(headerBuffer, 0, headerBuffer.Length, stoppingToken);
-                if (headerBytesRead == 0)
+                var (hasDataInHeader, headerBuffer) = await TryReadFromStreamAsync(networkStream, 6, stoppingToken);
+                if (!hasDataInHeader)
                 {
-                    // 클라이언트 연결 종료
-                    _logger.LogInformation("Client disconnected.");
-                    break;
+                    break; // 클라이언트 연결 종료
                 }
+
 
                 //헤더 파싱
                 VpbusFrameHeader frameHeader = new()
@@ -119,29 +117,27 @@ public class TcpServer : BackgroundService
                                                                    ? (FrameType)headerBuffer[0]
                                                                    : throw new InvalidOperationException($"Invalid FrameType: {headerBuffer[0]}"),
                                                    //[1],[2]번 인덱스 2 바이트
-                                                   MessageLength = BitConverter.ToUInt16(headerBuffer, 1),
+                                                   PayloadLength = BitConverter.ToUInt16(headerBuffer, 1),
                                                    //[3]번 인덱스
-                                                   MessageVersion = headerBuffer[3],
+                                                   DataVersion = headerBuffer[3],
                                                    //[4]번 인덱스
                                                    Role = headerBuffer[4],
                                                };
 
 
                 // 페이로드 읽기
-                //networkStream에서 앞서 마지막으로 읽은 다음 데이터(스트림의 현재 위치)부터 버퍼 길이 만큼 읽어 버퍼의 0번 인덱스부터 채운다.
                 //읽은 바이트 수가 0이면 연결끊김(종료)
-                byte[] payloadBuffer = new byte[frameHeader.MessageLength];
-                int payloadBytesRead = await networkStream.ReadAsync(payloadBuffer, 0, payloadBuffer.Length, stoppingToken);
-                if (payloadBytesRead == 0)
+                var (hasDataInPayload, payloadBuffer) = await TryReadFromStreamAsync(networkStream, frameHeader.PayloadLength, stoppingToken);
+                if (!hasDataInPayload)
                 {
-                    _logger.LogInformation("Client disconnected during payload read.");
-                    break;
+                    break; // 클라이언트 연결 종료
                 }
+
 
                 switch (frameHeader.FrameType)
                 {
                     case FrameType.Jwt:
-                        await ParseLineJwtTypePayloadAsync(payloadBuffer);
+                        await ParseJwtTypePayloadAsync(payloadBuffer);
                         break;
                     case FrameType.Injection:
                         await ParseCumTypePayloadAsync(FrameType.Injection, payloadBuffer);
@@ -171,6 +167,44 @@ public class TcpServer : BackgroundService
         }
     }
 
+    /// <summary>
+    /// 지정된 길이만큼 NetworkStream에서 데이터를 비동기적으로 읽고, 성공 여부와 데이터가 담긴 바이트배열 버퍼를 반환
+    /// </summary>
+    /// <param name="networkStream">데이터를 읽을 대상 <see cref="NetworkStream"/>.</param>
+    /// <param name="lengthToRead">읽어야 할 데이터의 바이트 길이.</param>
+    /// <param name="stoppingToken">작업 취소를 위한 <see cref="CancellationToken"/>.</param>
+    /// <returns>
+    /// 읽기 성공 여부와 데이터를 포함하는 튜플.
+    /// - <c>success</c>: 데이터를 성공적으로 읽었는지 여부.
+    /// - <c>buffer</c>: 읽어온 데이터를 담고 있는 바이트 배열. 실패 시 빈 배열 반환.
+    /// </returns>
+    /// <remarks>
+    /// - 데이터를 지정된 길이만큼 읽고, 실패 시 빈 배열과 false를 반환.
+    /// - 성공적으로 데이터를 읽은 경우 true와 데이터를 반환합.
+    /// - 클라이언트 연결이 종료되었거나 읽을 데이터가 없으면 success가 false.
+    /// </remarks>
+    private async Task<(bool success, byte[] buffer)> TryReadFromStreamAsync(NetworkStream networkStream, int lengthToRead, CancellationToken stoppingToken)
+    {
+        byte[] buffer = new byte[lengthToRead];
+        // networkStream에서 마지막으로 읽은 그 다음의 데이터(스트림의 현재 위치)부터 버퍼 길이 만큼 읽어 버퍼의 0번 인덱스부터 채운다.
+        // networkStream 은
+        int bytesRead = await networkStream.ReadAsync(buffer, 0, lengthToRead, stoppingToken);
+
+        // 읽은 데이터 길이가 0이면 연결을 종료할 수 있게 success를 false.
+        if (bytesRead == 0)
+        {
+            _logger.LogInformation("Client disconnected by reading zero data from stream.");
+            return (false, Array.Empty<byte>()); // (데이터 없음, 빈배열) 반환
+        }
+
+        return (true, buffer); // 읽기 성공. (데이터 있음, 데이터가 담긴 버퍼)
+    }
+
+    /// <summary>
+    /// 페이로드에 담긴 누적 생산량 또는 검사수량 데이터를 데이터베이스에 넣는다.
+    /// </summary>
+    /// <param name="frameType">커스텀 프로토콜 바이너리구조 frame의 타입</param>
+    /// <param name="payloadBuffer">페이로드 바이트배열 버퍼</param>
     private async Task ParseCumTypePayloadAsync(FrameType frameType, byte[] payloadBuffer)
     {
         VpbusFramePayload payload = new()
@@ -206,7 +240,11 @@ public class TcpServer : BackgroundService
         return;
     }
 
-    private async Task ParseLineJwtTypePayloadAsync(byte[] payloadBuffer)
+    /// <summary>
+    /// JWT 토큰 검증용 Frame Type 스트림데이터의 페이로드 데이터를 파싱한다.
+    /// </summary>
+    /// <param name="payloadBuffer">페이로드 바이트배열 버퍼</param>
+    private async Task ParseJwtTypePayloadAsync(byte[] payloadBuffer)
     {
         string jwtToken = Encoding.ASCII.GetString(payloadBuffer).TrimEnd('\0');
 

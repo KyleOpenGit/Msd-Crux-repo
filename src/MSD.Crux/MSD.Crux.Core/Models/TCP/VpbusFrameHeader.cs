@@ -19,14 +19,14 @@ public class VpbusFrameHeader
     /// 헤더인덱스[1]과 [2]번째 바이트 = 2 bytes를 수용하는 타입.
     /// Payload의 바이트 길이
     /// </summary>
-    public ushort MessageLength { get; set; }
+    public ushort PayloadLength { get; set; }
     /// <summary>
     /// 헤더인덱스[3]번째 바이트. 프로토콜 버전. 바이트 커스텀 Frame 데이터 포맷 버전관리용
     /// </summary>
     /// <code>
     /// 1 : version 1.0
     /// </code>
-    public byte MessageVersion { get; set; } = 1;
+    public byte DataVersion { get; set; } = 1;
     /// <summary>
     /// 헤더인덱스[4]번째 바이트. 클라이언트 역할 번호
     /// </summary>
