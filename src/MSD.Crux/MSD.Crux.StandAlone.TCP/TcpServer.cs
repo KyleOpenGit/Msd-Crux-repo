@@ -111,20 +111,22 @@ public class TcpServer : BackgroundService
                 }
 
 
-                //헤더 파싱
-                VpbusFrameHeader frameHeader = new()
+                // 헤더 파싱
+                VpbusFrameHeader frameHeader = new();
+
+                if (Enum.IsDefined(typeof(FrameType), (int)headerBuffer[0]))
                 {
-                    //[0]번 인덱스
-                    FrameType = Enum.IsDefined(typeof(FrameType), headerBuffer[0])
-                                                                   ? (FrameType)headerBuffer[0]
-                                                                   : throw new InvalidOperationException($"Invalid FrameType: {headerBuffer[0]}"),
-                    //[1],[2]번 인덱스 2 바이트
-                    PayloadLength = BitConverter.ToUInt16(headerBuffer, 1),
-                    //[3]번 인덱스
-                    DataVersion = headerBuffer[3],
-                    //[4]번 인덱스
-                    Role = headerBuffer[4],
-                };
+                    frameHeader.FrameType = (FrameType)headerBuffer[0];
+                }
+                else
+                {
+                    _logger.LogError($"Invalid FrameType: {headerBuffer[0]}");
+                    throw new InvalidOperationException($"Invalid FrameType: {headerBuffer[0]}");
+                }
+
+                frameHeader.PayloadLength = BitConverter.ToUInt16(headerBuffer, 1);
+                frameHeader.DataVersion = headerBuffer[3];
+                frameHeader.Role = headerBuffer[4];
 
 
                 // 페이로드 읽기
