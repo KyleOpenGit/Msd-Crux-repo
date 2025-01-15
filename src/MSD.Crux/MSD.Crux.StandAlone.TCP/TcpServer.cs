@@ -111,20 +111,22 @@ public class TcpServer : BackgroundService
                 }
 
 
-                //헤더 파싱
-                VpbusFrameHeader frameHeader = new()
-                                               {
-                                                   //[0]번 인덱스
-                                                   FrameType = Enum.IsDefined(typeof(FrameType), headerBuffer[0])
-                                                                   ? (FrameType)headerBuffer[0]
-                                                                   : throw new InvalidOperationException($"Invalid FrameType: {headerBuffer[0]}"),
-                                                   //[1],[2]번 인덱스 2 바이트
-                                                   PayloadLength = BitConverter.ToUInt16(headerBuffer, 1),
-                                                   //[3]번 인덱스
-                                                   DataVersion = headerBuffer[3],
-                                                   //[4]번 인덱스
-                                                   Role = headerBuffer[4],
-                                               };
+                // 헤더 파싱
+                VpbusFrameHeader frameHeader = new();
+
+                if (Enum.IsDefined(typeof(FrameType), (int)headerBuffer[0]))
+                {
+                    frameHeader.FrameType = (FrameType)headerBuffer[0];
+                }
+                else
+                {
+                    _logger.LogError($"Invalid FrameType: {headerBuffer[0]}");
+                    throw new InvalidOperationException($"Invalid FrameType: {headerBuffer[0]}");
+                }
+
+                frameHeader.PayloadLength = BitConverter.ToUInt16(headerBuffer, 1);
+                frameHeader.DataVersion = headerBuffer[3];
+                frameHeader.Role = headerBuffer[4];
 
 
                 // 페이로드 읽기
@@ -210,38 +212,38 @@ public class TcpServer : BackgroundService
     private async Task ParseCumTypePayloadAsync(FrameType frameType, byte[] payloadBuffer)
     {
         VpbusFramePayload payload = new()
-                                    {
-                                        LineId = Encoding.ASCII.GetString(payloadBuffer, 0, 4),
-                                        Time = BitConverter.ToInt64(payloadBuffer, 4),
-                                        LotId = Encoding.ASCII.GetString(payloadBuffer, 12, 20).TrimEnd('\0'),
-                                        Shift = Encoding.ASCII.GetString(payloadBuffer, 32, 4).TrimEnd('\0'),
-                                        EmployeeNumber = BitConverter.ToInt32(payloadBuffer, 36),
-                                        Total = BitConverter.ToInt32(payloadBuffer, 46)
-                                    };
+        {
+            LineId = Encoding.ASCII.GetString(payloadBuffer, 0, 4),
+            Time = BitConverter.ToInt64(payloadBuffer, 4),
+            LotId = Encoding.ASCII.GetString(payloadBuffer, 12, 20).TrimEnd('\0'),
+            Shift = Encoding.ASCII.GetString(payloadBuffer, 32, 4).TrimEnd('\0'),
+            EmployeeNumber = BitConverter.ToInt32(payloadBuffer, 36),
+            Total = BitConverter.ToInt32(payloadBuffer, 46)
+        };
 
         switch (frameType)
         {
             case FrameType.Injection:
                 await _injectionCumRepo.AddInjectionCumAsync(new InjectionCum
-                                                             {
-                                                                 LineId = payload.LineId,
-                                                                 Time = ConvertUnixTimeToDateTime(payload.Time),
-                                                                 LotId = payload.LotId,
-                                                                 Shift = payload.Shift,
-                                                                 EmployeeNumber = payload.EmployeeNumber,
-                                                                 Total = payload.Total
-                                                             });
+                {
+                    LineId = payload.LineId,
+                    Time = ConvertUnixTimeToDateTime(payload.Time),
+                    LotId = payload.LotId,
+                    Shift = payload.Shift,
+                    EmployeeNumber = payload.EmployeeNumber,
+                    Total = payload.Total
+                });
                 break;
             case FrameType.Vision:
                 await _visionCumRepo.AddVisionCumAsync(new VisionCum
-                                                       {
-                                                           LineId = payload.LineId,
-                                                           Time = ConvertUnixTimeToDateTime(payload.Time),
-                                                           LotId = payload.LotId,
-                                                           Shift = payload.Shift,
-                                                           EmployeeNumber = payload.EmployeeNumber,
-                                                           Total = payload.Total
-                                                       });
+                {
+                    LineId = payload.LineId,
+                    Time = ConvertUnixTimeToDateTime(payload.Time),
+                    LotId = payload.LotId,
+                    Shift = payload.Shift,
+                    EmployeeNumber = payload.EmployeeNumber,
+                    Total = payload.Total
+                });
                 break;
         }
 

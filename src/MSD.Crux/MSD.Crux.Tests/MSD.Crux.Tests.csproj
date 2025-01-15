@@ -1,32 +1,36 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net8.0</TargetFramework>
-        <ImplicitUsings>enable</ImplicitUsings>
-        <Nullable>enable</Nullable>
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
 
-        <IsPackable>false</IsPackable>
-        <IsTestProject>true</IsTestProject>
-    </PropertyGroup>
+    <IsPackable>false</IsPackable>
+    <IsTestProject>true</IsTestProject>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference Include="coverlet.collector" Version="6.0.0" />
-        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0" />
-        <PackageReference Include="Moq" Version="4.20.72" />
-        <PackageReference Include="NUnit" Version="4.3.2" />
-        <PackageReference Include="NUnit.Analyzers" Version="3.9.0" />
-        <PackageReference Include="NUnit3TestAdapter" Version="4.6.0" />
-    </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.0"/>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.12.0"/>
+    <PackageReference Include="Moq" Version="4.20.72"/>
+    <PackageReference Include="NUnit" Version="3.13.3"/>
+    <PackageReference Include="NUnit.Analyzers" Version="3.9.0"/>
+    <PackageReference Include="NUnit3TestAdapter" Version="4.6.0"/>
+  </ItemGroup>
 
-    <ItemGroup>
-        <Using Include="NUnit.Framework" />
-    </ItemGroup>
+  <ItemGroup>
+    <Using Include="NUnit.Framework"/>
+  </ItemGroup>
 
-    <ItemGroup>
-      <ProjectReference Include="..\MSD.Crux.API\MSD.Crux.API.csproj" />
-      <ProjectReference Include="..\MSD.Crux.Core\MSD.Crux.Core.csproj" />
-      <ProjectReference Include="..\MSD.Crux.Infra\MSD.Crux.Infra.csproj" />
-      <ProjectReference Include="..\MSD.Crux.Common\MSD.Crux.Common.csproj"/>
-    </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MSD.Client.TCP\MSD.Client.TCP.csproj"/>
+    <ProjectReference Include="..\MSD.Crux.API\MSD.Crux.API.csproj"/>
+    <ProjectReference Include="..\MSD.Crux.Core\MSD.Crux.Core.csproj"/>
+    <ProjectReference Include="..\MSD.Crux.Host\MSD.Crux.Host.csproj"/>
+    <ProjectReference Include="..\MSD.Crux.Infra\MSD.Crux.Infra.csproj"/>
+    <ProjectReference Include="..\MSD.Crux.Common\MSD.Crux.Common.csproj"/>
+    <ProjectReference Include="..\MSD.Crux.Shared\MSD.Crux.Shared.csproj"/>
+    <ProjectReference Include="..\MSD.Crux.StandAlone.TCP\MSD.Crux.StandAlone.TCP.csproj"/>
+  </ItemGroup>
 
 </Project>
