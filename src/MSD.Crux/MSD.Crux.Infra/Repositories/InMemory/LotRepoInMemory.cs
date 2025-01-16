@@ -2,7 +2,6 @@ using System.Collections.Concurrent;
 using MSD.Crux.Core.IRepositories;
 using MSD.Crux.Core.Models;
 
-
 namespace MSD.Crux.Infra.Repositories;
 
 /// <summary>
@@ -35,13 +34,22 @@ public class LotRepoInMemory : ILotRepo
         return Task.FromResult(lot);
     }
 
-    /// <summary>
-    /// 모든 Lot 데이터를 조회.
-    /// </summary>
-    /// <returns>Lot 리스트</returns>
-    public Task<IEnumerable<Lot>> GetAllAsync()
+    public Task<int> GetLatestSequenceOfIdAsync(string partId, DateTime date)
     {
-        return Task.FromResult(_lots.Values.AsEnumerable());
+        // Prefix 생성
+        string prefix = $"{partId}-{date:yyyyMMdd}-";
+
+        // 해당 Prefix로 시작하는 Lot ID를 필터링
+        var matchingLots = _lots.Keys.Where(key => key.StartsWith(prefix)).Select(key =>
+                                                                                  {
+                                                                                      // ID의 마지막 순번 추출
+                                                                                      string[] parts = key.Split('-');
+                                                                                      return int.TryParse(parts.LastOrDefault(), out int sequence) ? sequence : 0;
+                                                                                  });
+
+        // 최대 순번 반환
+        int maxSequence = matchingLots.Any() ? matchingLots.Max() : 0;
+        return Task.FromResult(maxSequence);
     }
 
     /// <summary>
@@ -59,6 +67,29 @@ public class LotRepoInMemory : ILotRepo
         }
 
         _lots[lot.Id] = lot;
+        return Task.CompletedTask;
+    }
+
+    public Task AddMinimalAsync(Lot lot)
+    {
+        // 최소 필드만 유효성 검사
+        if (string.IsNullOrWhiteSpace(lot.Id))
+        {
+            throw new ArgumentException("Lot ID는 필수입니다.", nameof(lot.Id));
+        }
+
+        if (string.IsNullOrWhiteSpace(lot.PartId))
+        {
+            throw new ArgumentException("Part ID는 필수입니다.", nameof(lot.PartId));
+        }
+
+        if (_lots.ContainsKey(lot.Id))
+        {
+            throw new InvalidOperationException($"Lot ID {lot.Id}는 이미 존재합니다.");
+        }
+
+        _lots[lot.Id] = new Lot { Id = lot.Id, PartId = lot.PartId, IssuedTime = lot.IssuedTime };
+
         return Task.CompletedTask;
     }
 
