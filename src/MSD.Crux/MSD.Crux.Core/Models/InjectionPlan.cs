@@ -24,7 +24,7 @@ public class InjectionPlan
     /// <summary>
     /// 주 계획수량
     /// </summary>
-    public int IsoWeek { get; set; }
+    public int WeekNumber { get; set; }
     /// <summary>
     /// 주 계획수량
     /// </summary>

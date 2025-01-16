@@ -26,13 +26,13 @@ public class InjectionPlanRepoPsqlDb : IInjectionPlanRepo
     public async Task<IEnumerable<InjectionPlan>> GetByWeekAsync(int weekNumber)
     {
         const string query = "SELECT * FROM injection_plan WHERE week_number = @WeekNumber";
-        return await _dbConnection.QueryAsync<InjectionPlan>(query, new { WeekNumber = weekNumber });
+        return await _dbConnection.QueryAsync<InjectionPlan>(query, new { weekNumber });
     }
 
     public async Task<IEnumerable<IGrouping<string, InjectionPlan>>> GetGroupedByPartAndOrderedByDateAsync(int weekNumber)
     {
         const string query = @"SELECT * FROM injection_plan WHERE week_number = @WeekNumber ORDER BY part_id, date";
-        var plans = await _dbConnection.QueryAsync<InjectionPlan>(query, new { WeekNumber = weekNumber });
+        var plans = await _dbConnection.QueryAsync<InjectionPlan>(query, new { weekNumber });
         return plans.GroupBy(p => p.PartId);
     }
 
@@ -48,16 +48,16 @@ public class InjectionPlanRepoPsqlDb : IInjectionPlanRepo
     public async Task AddAsync(InjectionPlan plan)
     {
         const string query = @"INSERT INTO injection_plan (part_id, date, day, qty_daily, week_number, qty_weekly)
-                               VALUES (@PartId, @Date, @Day, @QtyDaily, @IsoWeek, @QtyWeekly)";
-        await _dbConnection.ExecuteAsync(query, new { plan.PartId, plan.Date, plan.Day, plan.QtyDaily, IsoWeek = plan.IsoWeek, plan.QtyWeekly });
+                               VALUES (@PartId, @Date, @Day, @QtyDaily, @WeekNumber, @QtyWeekly)";
+        await _dbConnection.ExecuteAsync(query, new { plan.PartId, plan.Date, plan.Day, plan.QtyDaily, plan.WeekNumber, plan.QtyWeekly });
     }
 
     public async Task UpdateAsync(InjectionPlan plan)
     {
         const string query = @"UPDATE injection_plan
-                               SET day = @Day, qty_daily = @QtyDaily, week_number = @IsoWeek, qty_weekly = @QtyWeekly
+                               SET day = @Day, qty_daily = @QtyDaily, week_number = @WeekNumber, qty_weekly = @QtyWeekly
                                WHERE part_id = @PartId AND date = @Date";
-        int rowsAffected = await _dbConnection.ExecuteAsync(query, new { plan.PartId, plan.Date, plan.Day, plan.QtyDaily, IsoWeek = plan.IsoWeek, plan.QtyWeekly });
+        int rowsAffected = await _dbConnection.ExecuteAsync(query, new { plan.PartId, plan.Date, plan.Day, plan.QtyDaily, plan.WeekNumber, plan.QtyWeekly });
 
         if (rowsAffected == 0)
         {

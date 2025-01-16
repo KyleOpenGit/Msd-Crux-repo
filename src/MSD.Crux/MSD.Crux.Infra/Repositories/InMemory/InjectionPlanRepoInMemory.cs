@@ -19,7 +19,7 @@ public class InjectionPlanRepoInMemory : IInjectionPlanRepo
 
     public Task<IEnumerable<InjectionPlan>> GetByWeekAsync(int weekNumber)
     {
-        var plans = _plans.Values.Where(p => p.IsoWeek == weekNumber);
+        var plans = _plans.Values.Where(p => p.WeekNumber == weekNumber);
         return Task.FromResult(plans.AsEnumerable());
     }
 
@@ -56,7 +56,7 @@ public class InjectionPlanRepoInMemory : IInjectionPlanRepo
 
     public Task<IEnumerable<IGrouping<string, InjectionPlan>>> GetGroupedByPartAndOrderedByDateAsync(int weekNumber)
     {
-        var grouped = _plans.Values.Where(p => p.IsoWeek == weekNumber).OrderBy(p => p.Date).GroupBy(p => p.PartId);
+        var grouped = _plans.Values.Where(p => p.WeekNumber == weekNumber).OrderBy(p => p.Date).GroupBy(p => p.PartId);
 
         return Task.FromResult(grouped.AsEnumerable());
     }
