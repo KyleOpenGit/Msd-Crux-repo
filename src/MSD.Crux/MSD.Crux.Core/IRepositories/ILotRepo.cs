@@ -26,12 +26,6 @@ namespace MSD.Crux.Core.IRepositories
         Task<Lot?> GetByIdAsync(string id);
 
         /// <summary>
-        /// 모든 Lot 데이터를 조회
-        /// </summary>
-        /// <returns>모든 Lot 데이터의 리스트</returns>
-        Task<IEnumerable<Lot>> GetAllAsync();
-
-        /// <summary>
         /// 새로운 Lot를 추가
         /// </summary>
         /// <param name="lot">추가할 Lot 엔티티</param>

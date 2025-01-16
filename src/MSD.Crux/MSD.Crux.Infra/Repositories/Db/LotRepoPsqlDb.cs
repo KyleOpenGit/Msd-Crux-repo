@@ -33,12 +33,6 @@ public class LotRepoPsqlDb : ILotRepo
         return await _dbConnection.QuerySingleOrDefaultAsync<Lot>(query, new { Id = id });
     }
 
-    public async Task<IEnumerable<Lot>> GetAllAsync()
-    {
-        const string query = "SELECT * FROM lot";
-        return await _dbConnection.QueryAsync<Lot>(query);
-    }
-
     public async Task AddAsync(Lot lot)
     {
         const string query = @"

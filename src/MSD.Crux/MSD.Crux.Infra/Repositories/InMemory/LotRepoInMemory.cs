@@ -35,14 +35,6 @@ public class LotRepoInMemory : ILotRepo
         return Task.FromResult(lot);
     }
 
-    /// <summary>
-    /// 모든 Lot 데이터를 조회.
-    /// </summary>
-    /// <returns>Lot 리스트</returns>
-    public Task<IEnumerable<Lot>> GetAllAsync()
-    {
-        return Task.FromResult(_lots.Values.AsEnumerable());
-    }
 
     /// <summary>
     /// 새로운 Lot를 추가.
