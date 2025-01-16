@@ -33,10 +33,14 @@ public class LotRepoPsqlDb : ILotRepo
         return await _dbConnection.QuerySingleOrDefaultAsync<Lot>(query, new { Id = id });
     }
 
-    public async Task<IEnumerable<Lot>> GetAllAsync()
+    public async Task<int> GetLatestSequenceOfIdAsync(string partId, DateTime date)
     {
-        const string query = "SELECT * FROM lot";
-        return await _dbConnection.QueryAsync<Lot>(query);
+        const string query = @"
+            SELECT COALESCE(MAX(SUBSTRING(id FROM '-(\d+)$')::INTEGER), 0)
+            FROM lot
+            WHERE id LIKE @Prefix || '%'";
+        string prefix = $"{partId}-{date:yyyyMMdd}-";
+        return await _dbConnection.ExecuteScalarAsync<int>(query, new { Prefix = prefix });
     }
 
     public async Task AddAsync(Lot lot)
@@ -45,6 +49,14 @@ public class LotRepoPsqlDb : ILotRepo
             INSERT INTO lot (id, part_id, line_id, issued_time, qty, completed_qty, vision_line_ids, injection_start, injection_end, injection_worker, vision_start, vision_end, vision_worker, supplier, note)
             VALUES (@Id, @PartId, @LineId, @IssuedTime, @Qty, @CompletedQty, @VisionLineIds, @InjectionStart, @InjectionEnd, @InjectionWorker, @VisionStart, @VisionEnd, @VisionWorker, @Supplier, @Note)";
         await _dbConnection.ExecuteAsync(query, lot);
+    }
+
+    public async Task AddMinimalAsync(Lot lot)
+    {
+        const string query = @"
+            INSERT INTO lot (id, part_id, issued_time)
+            VALUES (@Id, @PartId, @IssuedTime)";
+        await _dbConnection.ExecuteAsync(query, new { lot.Id, lot.PartId, lot.IssuedTime });
     }
 
     public async Task UpdateAsync(Lot lot)

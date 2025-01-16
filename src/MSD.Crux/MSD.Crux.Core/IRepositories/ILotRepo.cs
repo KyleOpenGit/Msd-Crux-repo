@@ -26,10 +26,21 @@ namespace MSD.Crux.Core.IRepositories
         Task<Lot?> GetByIdAsync(string id);
 
         /// <summary>
-        /// 모든 Lot 데이터를 조회
+        /// 특정 제품 ID와 날짜에 대한 최신 순번 조회 (새로운 Lot Id 발급용)
         /// </summary>
-        /// <returns>모든 Lot 데이터의 리스트</returns>
-        Task<IEnumerable<Lot>> GetAllAsync();
+        /// <remarks>
+        /// - 주어진 `partId`와 `date`로 구성된 접두사(Prefix)를 기준으로,
+        ///   테이블에서 해당 Prefix로 시작하는 Lot ID를 검색합니다.
+        /// - Lot ID 형식은 `"{partId}-{date:yyyyMMdd}-{sequence}"`와 같습니다.
+        /// - 예: "AAAA1-20250101-1", "AAAA1-20250101-2", ...
+        /// </remarks>
+        /// <param name="partId">Lot ID에 포함될 제품 ID (예: "AAAA1")</param>
+        /// <param name="date">Lot ID에 포함될 날짜 (yyyy-MM-dd 형식)</param>
+        /// <returns>
+        /// - 같은 Prefix로 시작하는 Lot ID 중 가장 큰 순번(`sequence`) 반환.
+        /// - 해당 Prefix로 시작하는 Lot ID가 없으면 기본값 `0` 반환.
+        /// </returns>
+        Task<int> GetLatestSequenceOfIdAsync(string partId, DateTime date);
 
         /// <summary>
         /// 새로운 Lot를 추가
@@ -37,6 +48,13 @@ namespace MSD.Crux.Core.IRepositories
         /// <param name="lot">추가할 Lot 엔티티</param>
         /// <returns>비동기 작업</returns>
         Task AddAsync(Lot lot);
+
+        /// <summary>
+        /// 최소 Lot 정보를 추가 (lot ID 발급 전용).
+        /// </summary>
+        /// <param name="lot">Lot 엔티티 객체</param>
+        /// <remarks> Id, PartId, IssuedTime 세가지 정보에대한 칼럼만 채운다 </remarks>
+        Task AddMinimalAsync(Lot lot);
 
         /// <summary>
         /// 기존 Lot 데이터를 업데이트
