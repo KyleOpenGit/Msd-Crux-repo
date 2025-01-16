@@ -25,6 +25,7 @@ public static class DiRegistrar
         services.AddScoped<ILotService, LotService>();
         services.AddScoped<IVisionNgService, VisionNgService>();
         services.AddScoped<ICalendarService, CalendarService>();
+        services.AddScoped<IInjectionPlanService, InjectionPlanService>();
         return services;
     }
 
@@ -42,7 +43,8 @@ public static class DiRegistrar
         services.AddTransient<IVisionCumRepo, VisionCumRepoPsqlDb>();
         services.AddTransient<IInjectionCumRepo, InjectionCumRepoPsqlDb>();
         services.AddTransient<ILotRepo, LotRepoPsqlDb>();
-        services.AddScoped<IVisionNgRepo, VisionNgRepoPsqlDb>();
+        services.AddTransient<IVisionNgRepo, VisionNgRepoPsqlDb>();
+        services.AddTransient<IInjectionPlanRepo, InjectionPlanRepoPsqlDb>();
         return services;
     }
 }
