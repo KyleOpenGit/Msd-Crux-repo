@@ -56,7 +56,7 @@ public class TcpServer : BackgroundService
             {
                 //pending 중인 클라이언트의 연결을 수락하고 각 연결마다 TcpClient 객체 생성.
                 TcpClient? client = await listener.AcceptTcpClientAsync(stoppingToken);
-                _logger.LogInformation("New Client connected");
+                _logger.LogInformation("새로운 Client 연결됨");
 
                 // Task를 await 없이 비동기적으로 실행해서 다음 pending 중인 연결을 곧바로 수락할수 있도록 한다.
                 _ = ProcessClientStreamAsync(client, stoppingToken);
@@ -96,6 +96,8 @@ public class TcpServer : BackgroundService
     {
         // 클라이언트 연결에대한 데이터 송수신 스트림
         await using var networkStream = client.GetStream();
+        _logger.LogInformation("-Get Stream!: ProcessClientStreamAsync");
+
 
         //연결되어있는동안 네트워크 스트림을 읽어서 처리
         try
@@ -191,7 +193,7 @@ public class TcpServer : BackgroundService
     {
         byte[] buffer = new byte[lengthToRead];
         // networkStream에서 마지막으로 읽은 그 다음의 데이터(스트림의 현재 위치)부터 버퍼 길이 만큼 읽어 버퍼의 0번 인덱스부터 채운다.
-        // networkStream 은
+        // networkStream 은 한번 읽은 부분은 다시 못 읽는다.
         int bytesRead = await networkStream.ReadAsync(buffer, 0, lengthToRead, stoppingToken);
 
         // 읽은 데이터 길이가 0이면 연결을 종료할 수 있게 success를 false.
@@ -212,38 +214,41 @@ public class TcpServer : BackgroundService
     private async Task ParseCumTypePayloadAsync(FrameType frameType, byte[] payloadBuffer)
     {
         VpbusFramePayload payload = new()
-        {
-            LineId = Encoding.ASCII.GetString(payloadBuffer, 0, 4).TrimEnd('\0'),
-            Time = BitConverter.ToInt64(payloadBuffer, 4),
-            LotId = Encoding.ASCII.GetString(payloadBuffer, 12, 20).TrimEnd('\0'),
-            Shift = Encoding.ASCII.GetString(payloadBuffer, 32, 4).TrimEnd('\0', ' '),
-            EmployeeNumber = BitConverter.ToInt32(payloadBuffer, 36),
-            Total = BitConverter.ToInt32(payloadBuffer, 40) // 수정: Total의 시작 위치를 40으로
-        };
+                                    {
+                                        LineId = Encoding.ASCII.GetString(payloadBuffer, 0, 4).TrimEnd('\0'),
+                                        Time = BitConverter.ToInt64(payloadBuffer, 4), // 클라이언트에서 보낸 밀리세컨드 값
+                                        LotId = Encoding.ASCII.GetString(payloadBuffer, 12, 20).TrimEnd('\0'),
+                                        Shift = Encoding.ASCII.GetString(payloadBuffer, 32, 4).TrimEnd('\0', ' '),
+                                        EmployeeNumber = BitConverter.ToInt32(payloadBuffer, 36),
+                                        Total = BitConverter.ToInt32(payloadBuffer, 40) // 수정: Total의 시작 위치를 40으로
+                                    };
+
+        // Time 값을 밀리세컨드로 변환하여 DB에 저장
+        DateTime timestamp = AddMilliSecondsToUnixEpoch(payload.Time);
 
         switch (frameType)
         {
             case FrameType.Injection:
                 await _injectionCumRepo.AddInjectionCumAsync(new InjectionCum
-                {
-                    LineId = payload.LineId,
-                    Time = ConvertUnixTimeToDateTime(payload.Time),
-                    LotId = payload.LotId,
-                    Shift = payload.Shift,
-                    EmployeeNumber = payload.EmployeeNumber,
-                    Total = payload.Total
-                });
+                                                             {
+                                                                 LineId = payload.LineId,
+                                                                 Time = timestamp, // 밀리세컨 정밀도 유지된 타임스탬프
+                                                                 LotId = payload.LotId,
+                                                                 Shift = payload.Shift,
+                                                                 EmployeeNumber = payload.EmployeeNumber,
+                                                                 Total = payload.Total
+                                                             });
                 break;
             case FrameType.Vision:
                 await _visionCumRepo.AddVisionCumAsync(new VisionCum
-                {
-                    LineId = payload.LineId,
-                    Time = ConvertUnixTimeToDateTime(payload.Time),
-                    LotId = payload.LotId,
-                    Shift = payload.Shift,
-                    EmployeeNumber = payload.EmployeeNumber,
-                    Total = payload.Total
-                });
+                                                       {
+                                                           LineId = payload.LineId,
+                                                           Time = timestamp, // 밀리세컨 정밀도 유지된 타임스탬프
+                                                           LotId = payload.LotId,
+                                                           Shift = payload.Shift,
+                                                           EmployeeNumber = payload.EmployeeNumber,
+                                                           Total = payload.Total
+                                                       });
                 break;
         }
 
@@ -271,14 +276,17 @@ public class TcpServer : BackgroundService
     }
 
     /// <summary>
-    /// 유닉스 타임스탬프를 DateTime형식으로 변경
+    /// 밀리세컨 보장 메소드
     /// </summary>
-    private static DateTime ConvertUnixTimeToDateTime(long unixTime)
+    /// <param name="milliseconds">밀리세컨. 202501312359000</param>
+    /// <returns></returns>
+    private  DateTime AddMilliSecondsToUnixEpoch(long milliseconds)
     {
+        // _logger.LogDebug("Converting milliseconds to DateTime. milliseconds: {Milliseconds}", milliseconds); //1736997639139
+
         // 유닉스 에포크 (1970년 1월 1일 UTC)
         DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
-        // 초 단위 타임스탬프를 에포크에 더하여 DateTime 반환
-        return epoch.AddSeconds(unixTime);
+        return epoch.AddMilliseconds(milliseconds); // 밀리세컨드 기준으로 DateTime 변환
     }
 }
