@@ -214,14 +214,14 @@ public class TcpServer : BackgroundService
     private async Task ParseCumTypePayloadAsync(FrameType frameType, byte[] payloadBuffer)
     {
         VpbusFramePayload payload = new()
-                                    {
-                                        LineId = Encoding.ASCII.GetString(payloadBuffer, 0, 4).TrimEnd('\0'),
-                                        Time = BitConverter.ToInt64(payloadBuffer, 4), // 클라이언트에서 보낸 밀리세컨드 값
-                                        LotId = Encoding.ASCII.GetString(payloadBuffer, 12, 20).TrimEnd('\0'),
-                                        Shift = Encoding.ASCII.GetString(payloadBuffer, 32, 4).TrimEnd('\0', ' '),
-                                        EmployeeNumber = BitConverter.ToInt32(payloadBuffer, 36),
-                                        Total = BitConverter.ToInt32(payloadBuffer, 40) // 수정: Total의 시작 위치를 40으로
-                                    };
+        {
+            LineId = Encoding.ASCII.GetString(payloadBuffer, 0, 4).TrimEnd('\0'),
+            Time = BitConverter.ToInt64(payloadBuffer, 4), // 클라이언트에서 보낸 밀리세컨드 값
+            LotId = Encoding.ASCII.GetString(payloadBuffer, 12, 20).TrimEnd('\0'),
+            Shift = Encoding.ASCII.GetString(payloadBuffer, 32, 4).TrimEnd('\0', ' '),
+            EmployeeNumber = BitConverter.ToInt32(payloadBuffer, 36),
+            Total = BitConverter.ToInt32(payloadBuffer, 40) // 수정: Total의 시작 위치를 40으로
+        };
 
         // Time 값을 밀리세컨드로 변환하여 DB에 저장
         DateTime timestamp = AddMilliSecondsToUnixEpoch(payload.Time);
@@ -230,25 +230,25 @@ public class TcpServer : BackgroundService
         {
             case FrameType.Injection:
                 await _injectionCumRepo.AddInjectionCumAsync(new InjectionCum
-                                                             {
-                                                                 LineId = payload.LineId,
-                                                                 Time = timestamp, // 밀리세컨 정밀도 유지된 타임스탬프
-                                                                 LotId = payload.LotId,
-                                                                 Shift = payload.Shift,
-                                                                 EmployeeNumber = payload.EmployeeNumber,
-                                                                 Total = payload.Total
-                                                             });
+                {
+                    LineId = payload.LineId,
+                    Time = timestamp, // 밀리세컨 정밀도 유지된 타임스탬프
+                    LotId = payload.LotId,
+                    Shift = payload.Shift,
+                    EmployeeNumber = payload.EmployeeNumber,
+                    Total = payload.Total
+                });
                 break;
             case FrameType.Vision:
                 await _visionCumRepo.AddVisionCumAsync(new VisionCum
-                                                       {
-                                                           LineId = payload.LineId,
-                                                           Time = timestamp, // 밀리세컨 정밀도 유지된 타임스탬프
-                                                           LotId = payload.LotId,
-                                                           Shift = payload.Shift,
-                                                           EmployeeNumber = payload.EmployeeNumber,
-                                                           Total = payload.Total
-                                                       });
+                {
+                    LineId = payload.LineId,
+                    Time = timestamp, // 밀리세컨 정밀도 유지된 타임스탬프
+                    LotId = payload.LotId,
+                    Shift = payload.Shift,
+                    EmployeeNumber = payload.EmployeeNumber,
+                    Total = payload.Total
+                });
                 break;
         }
 
@@ -280,7 +280,7 @@ public class TcpServer : BackgroundService
     /// </summary>
     /// <param name="milliseconds">밀리세컨. 202501312359000</param>
     /// <returns></returns>
-    private  DateTime AddMilliSecondsToUnixEpoch(long milliseconds)
+    private DateTime AddMilliSecondsToUnixEpoch(long milliseconds)
     {
         // _logger.LogDebug("Converting milliseconds to DateTime. milliseconds: {Milliseconds}", milliseconds); //1736997639139
 

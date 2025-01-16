@@ -1,8 +1,8 @@
 using System.Globalization;
 using MSD.Crux.Common;
-using MSD.Crux.Core.Models;
 using MSD.Crux.Core.IRepositories;
 using MSD.Crux.Core.IServices;
+using MSD.Crux.Core.Models;
 
 namespace MSD.Crux.Infra.Services;
 
@@ -25,25 +25,25 @@ public class InjectionPlanService(IInjectionPlanRepo _injectionPlanRepo) : IInje
         foreach (var date in dates)
         {
             InjectionPlan plan = new()
-                                 {
-                                     PartId = request.PartId,
-                                     Date = date,
-                                     Day = date.ToString("ddd", CultureInfo.InvariantCulture),
-                                     QtyDaily = 0,
-                                     WeekNumber = request.WeekNumber,
-                                     QtyWeekly = request.QtyWeekly
-                                 };
+            {
+                PartId = request.PartId,
+                Date = date,
+                Day = date.ToString("ddd", CultureInfo.InvariantCulture),
+                QtyDaily = 0,
+                WeekNumber = request.WeekNumber,
+                QtyWeekly = request.QtyWeekly
+            };
             await _injectionPlanRepo.AddAsync(plan);
         }
 
         // 응답 DTO 생성
         return new InjWeeklyPlanRspDto
-               {
-                   PartId = request.PartId,
-                   WeekNumber = request.WeekNumber,
-                   QtyWeekly = request.QtyWeekly,
-                   DailyQtyList = dates.Select(d => new DailyQty { Date = d, Qty = 0 }).ToList()
-               };
+        {
+            PartId = request.PartId,
+            WeekNumber = request.WeekNumber,
+            QtyWeekly = request.QtyWeekly,
+            DailyQtyList = dates.Select(d => new DailyQty { Date = d, Qty = 0 }).ToList()
+        };
     }
 
     public async Task UpdateDailyPlanAsync(int weekNumber, string partId, List<int> dailyQuantities)
