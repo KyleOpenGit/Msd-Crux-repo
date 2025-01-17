@@ -29,7 +29,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libraries", "Libraries", "{
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Testing", "Testing", "{9C56EE00-E2E5-4C7E-9870-E8615E9EBD91}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSD.DevTool", "MSD.DevTool\MSD.DevTool.csproj", "{31DEA77E-D730-4E8B-A57C-4D66DD62FFD7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MSD.Crux.DevTool", "MSD.Crux.DevTool\MSD.Crux.DevTool.csproj", "{31DEA77E-D730-4E8B-A57C-4D66DD62FFD7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

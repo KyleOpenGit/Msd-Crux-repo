@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Npgsql;
 
-namespace MSD.DevTool;
+namespace MSD.Crux.DevTool;
 
 class Program
 {
@@ -14,7 +14,7 @@ class Program
     static async Task Main(string[] args)
     {
         // CLI 명령어 정의
-        var rootCommand = new RootCommand("MSD.DevTool CLI Tool") { new Option<string>("--connection-string", "Database connection string") };
+        var rootCommand = new RootCommand("MSD.Crux.DevTool CLI Tool") { new Option<string>("--connection-string", "Database connection string") };
 
         rootCommand.SetHandler((string connectionString) =>
                                {

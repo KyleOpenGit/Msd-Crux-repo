@@ -5,7 +5,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AssemblyName>msd-dev-tool</AssemblyName> <!-- 실행 파일 이름 -->
+    <AssemblyName>crux-dev-tool</AssemblyName> <!-- 실행 파일 이름 -->
   </PropertyGroup>
 
   <ItemGroup>
