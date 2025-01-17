@@ -28,4 +28,11 @@ public interface IInjectionPlanService
     /// <param name="date">날짜</param>
     /// <returns>제품별 목표 수량</returns>
     Task<Dictionary<string, int>> GetDailyPlansAsync(DateTime date);
+
+    /// <summary>
+    /// 특정 주차의 모든 제품별 주간 생산계획 조회
+    /// </summary>
+    /// <param name="weekNumber">주차 번호</param>
+    /// <returns>주간 생산계획 응답 DTO 리스트</returns>
+    Task<List<InjWeeklyPlanRspDto>> GetWeeklyPlansAsync(int weekNumber);
 }

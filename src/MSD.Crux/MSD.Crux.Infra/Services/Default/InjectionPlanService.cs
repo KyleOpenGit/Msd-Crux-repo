@@ -68,4 +68,28 @@ public class InjectionPlanService(IInjectionPlanRepo _injectionPlanRepo) : IInje
     {
         return await _injectionPlanRepo.GetDailyQuantitiesByPartAsync(date);
     }
+
+    public async Task<List<InjWeeklyPlanRspDto>> GetWeeklyPlansAsync(int weekNumber)
+    {
+        // 주어진 주차 번호에 대한 모든 생산계획 조회
+        IEnumerable<InjectionPlan> weeklyPlanByWeekNumber = await _injectionPlanRepo.GetByWeekAsync(weekNumber);
+
+        // 제품별로 그룹화
+        IEnumerable<IGrouping<string, InjectionPlan>>? groupedPlans = weeklyPlanByWeekNumber.GroupBy(p => p.PartId);
+
+        // 응답 DTO 리스트 생성
+        List<InjWeeklyPlanRspDto>? weeklyPartsPlan = groupedPlans.Select(group =>
+                                                                {
+                                                                    InjectionPlan? firstPlan = group.First();
+                                                                    return new InjWeeklyPlanRspDto
+                                                                           {
+                                                                               PartId = firstPlan.PartId,
+                                                                               WeekNumber = firstPlan.WeekNumber,
+                                                                               QtyWeekly = firstPlan.QtyWeekly,
+                                                                               DailyQtyList = group.Select(p => new DailyQty { Date = p.Date, Qty = p.QtyDaily }).OrderBy(d => d.Date).ToList()
+                                                                           };
+                                                                }).ToList();
+
+        return weeklyPartsPlan;
+    }
 }
