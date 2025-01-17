@@ -33,6 +33,24 @@ public class PlanController : ControllerBase
         return Ok(response);
     }
 
+
+    /// <summary>
+    /// 특정 주차의 모든 제품별 주간 생산계획 조회
+    /// </summary>
+    /// <param name="weekNumber">조회할 주차 번호</param>
+    /// <returns>주간 생산계획 리스트</returns>
+    [HttpGet("week/{weekNumber}")]
+    public async Task<IActionResult> GetWeeklyPlans(int weekNumber)
+    {
+        if (weekNumber <= 0 || weekNumber > 53)
+        {
+            return BadRequest(new { message = "유효하지 않은 주차 번호입니다. 1~53 사이의 값을 입력하세요." });
+        }
+
+        List<InjWeeklyPlanRspDto> plans = await _injectionPlanService.GetWeeklyPlansAsync(weekNumber);
+        return Ok(plans);
+    }
+
     /// <summary>
     /// 특정 주차 + 특정 제품의 모든 일일 생산 수량 수정.
     /// </summary>
