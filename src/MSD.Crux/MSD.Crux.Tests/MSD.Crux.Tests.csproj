@@ -23,14 +23,14 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MSD.Client.TCP\MSD.Client.TCP.csproj"/>
+    <ProjectReference Include="..\MSD.TCPClient\MSD.TCPClient.csproj" />
     <ProjectReference Include="..\MSD.Crux.API\MSD.Crux.API.csproj"/>
     <ProjectReference Include="..\MSD.Crux.Core\MSD.Crux.Core.csproj"/>
     <ProjectReference Include="..\MSD.Crux.Host\MSD.Crux.Host.csproj"/>
     <ProjectReference Include="..\MSD.Crux.Infra\MSD.Crux.Infra.csproj"/>
     <ProjectReference Include="..\MSD.Crux.Common\MSD.Crux.Common.csproj"/>
     <ProjectReference Include="..\MSD.Crux.Shared\MSD.Crux.Shared.csproj"/>
-    <ProjectReference Include="..\MSD.Crux.StandAlone.TCP\MSD.Crux.StandAlone.TCP.csproj"/>
+    <ProjectReference Include="..\MSD.TCPServer\MSD.TCPServer.csproj" />
   </ItemGroup>
 
 </Project>

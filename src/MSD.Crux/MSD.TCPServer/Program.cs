@@ -5,7 +5,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MSD.Crux.Core.IRepositories;
 using MSD.Crux.Shared;
-using MSD.Crux.StandAlone.TCP;
+using MSD.TCPServer;
 using Npgsql;
 
 // 환경이 없으면 "Production"환경
