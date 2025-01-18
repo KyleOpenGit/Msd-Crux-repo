@@ -10,7 +10,7 @@
         },
         "--version": {
             "commandName": "Project",
-            "commandLineArgs": "--version",
+            "commandLineArgs": "--app-version",
             "environmentVariables": {
                 "ASPNETCORE_ENVIRONMENT": "Local"
             }
