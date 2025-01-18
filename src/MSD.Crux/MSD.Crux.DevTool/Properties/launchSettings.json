@@ -8,6 +8,13 @@
                 "ASPNETCORE_ENVIRONMENT": "Local"
             }
         },
+        "--version": {
+            "commandName": "Project",
+            "commandLineArgs": "--version",
+            "environmentVariables": {
+                "ASPNETCORE_ENVIRONMENT": "Local"
+            }
+        },
         "--connection-string": {
             "commandName": "Project",
             "commandLineArgs": "--connection-string \"Host=localhost;Port=5432;Database=msd_db;Username=msd_db_user;Password=vaporcloud1234;\"",
