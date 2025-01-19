@@ -14,7 +14,7 @@ public class LotController(ILotService _lotService) : ControllerBase
     /// <summary>
     /// 생산이 완료된 lot를 조회
     /// </summary>
-    /// <returns>lotlist 또는 null</returns>
+    /// <returns>lot list 또는 null</returns>
     [HttpGet("lots/completed")]
     public async Task<IActionResult> GetAllCompletedLots()
     {
@@ -30,10 +30,11 @@ public class LotController(ILotService _lotService) : ControllerBase
     [HttpPost("lot/issue-new")]
     public async Task<IActionResult> IssueNewLotId([FromBody] LotIdIssueReqDto request)
     {
-        if (!ModelState.IsValid)
+        if (!ModelState.IsValid || string.IsNullOrWhiteSpace(request.PartId) || string.IsNullOrWhiteSpace(request.LineId) || request.Date == default)
         {
-            return BadRequest(ModelState);
+            return BadRequest("PartId, LineId,  Date 모두 필수이며 값형식이 맞아야합니다.");
         }
+
 
         string newLotId = await _lotService.IssueNewLotIdAsync(request);
         return Ok(new { LotId = newLotId });
