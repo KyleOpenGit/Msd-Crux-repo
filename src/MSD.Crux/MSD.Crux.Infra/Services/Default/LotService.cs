@@ -4,6 +4,12 @@ using MSD.Crux.Core.Models;
 
 namespace MSD.Crux.Infra.Services;
 
+/// <summary>
+/// Lot 조회, 발급에관한 서비스 인터페이스 디폴트 구현체
+/// </summary>
+/// <param name="_lotRepo">DIC로부터 주입받는 ILotRepo 구현체 객체</param>
+/// <param name="_partRepo">DIC로부터 주입받는 IPartRepo 구현체 객체</param>
+/// <param name="_lineRepo">DIC로부터 주입받는 ILineRepo 구현체 객체</param>
 public class LotService(ILotRepo _lotRepo, IPartRepo _partRepo, ILineRepo _lineRepo) : ILotService
 {
     public async Task<List<Lot?>> GetAllCompletedLotsAsync()
@@ -13,17 +19,7 @@ public class LotService(ILotRepo _lotRepo, IPartRepo _partRepo, ILineRepo _lineR
 
     public async Task<string> IssueNewLotIdAsync(LotIdIssueReqDto request)
     {
-        // PartId 검증
-        if (!await IsPartIdValidAsync(request.PartId))
-        {
-            throw new ArgumentException($"Invalid PartId: {request.PartId}는 존재하지 않습니다.");
-        }
-
-        // LineId 검증
-        if (!await IsLineIdValidAsync(request.LineId))
-        {
-            throw new ArgumentException($"Invalid LineId: {request.LineId} 는 존재하지 않습니다.");
-        }
+        await ValidateIdsAsync(request.PartId, request.LineId);
 
         string prefix = $"{request.PartId}-{request.Date:yyyyMMdd}-";
 
@@ -38,22 +34,15 @@ public class LotService(ILotRepo _lotRepo, IPartRepo _partRepo, ILineRepo _lineR
     }
 
     /// <summary>
-    /// PartId 유효성 검증.
+    /// PartId와 LineId 유효성 검증
     /// </summary>
     /// <param name="partId">검증할 PartId</param>
-    /// <returns>테이블 레코드 존재 여부</returns>
-    private async Task<bool> IsPartIdValidAsync(string partId)
-    {
-        return await _partRepo.ExistsByIdAsync(partId);
-    }
-
-    /// <summary>
-    /// LineId 유효성 검증
-    /// </summary>
     /// <param name="lineId">검증할 LineId</param>
-    /// <returns>유효 여부</returns>
-    private async Task<bool> IsLineIdValidAsync(string lineId)
+    private async Task ValidateIdsAsync(string partId, string lineId)
     {
-        return await _lineRepo.GetByIdAsync(lineId) != null;
+        if (await _partRepo.GetByIdAsync(partId) == null)
+            throw new ArgumentException($"Invalid PartId: {partId}는 존재하지 않습니다.");
+        if (await _lineRepo.GetByIdAsync(lineId) == null)
+            throw new ArgumentException($"Invalid LineId: {lineId}는 존재하지 않습니다.");
     }
 }

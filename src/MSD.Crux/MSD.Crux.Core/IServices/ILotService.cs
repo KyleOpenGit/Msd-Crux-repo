@@ -3,7 +3,7 @@
 namespace MSD.Crux.Core.IServices;
 
 /// <summary>
-/// Lot 테이블 관련 서비스 구현체
+/// Lot 조회, 발급에관한 서비스 인터페이스
 /// </summary>
 public interface ILotService
 {
@@ -14,9 +14,9 @@ public interface ILotService
     Task<List<Lot?>> GetAllCompletedLotsAsync();
 
     /// <summary>
-    /// 새로운 Lot ID 발급
+    /// 새로운 Lot 번호 발급. 데이터 레포지토리에 요청된 part id, line id가 존재하는 경우에만 발급한다.
     /// </summary>
-    /// <param name="request">Lot ID 발급 요청 DTO</param>
-    /// <returns>새로 발급된 Lot ID</returns>
+    /// <param name="request">Lot 번호 발급 요청 DTO</param>
+    /// <returns>새로 발급된 Lot 번호</returns>
     Task<string> IssueNewLotIdAsync(LotIdIssueReqDto request);
 }

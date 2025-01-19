@@ -6,24 +6,19 @@ using MSD.Crux.Core.IRepositories;
 using MSD.Crux.Core.Models;
 
 namespace MSD.Crux.Infra.Repositories;
-
 /// <summary>
-/// Part 테이블에 대한 PostgreSQL DB 구현체
+///  Part 테이블에 대한 PostgreSQL DB 구현체
 /// </summary>
-public class PartRepoPsqlDb : IPartRepo
+/// <param name="_dbConnection">DIC에서 주입받는 IdbConnection 구현체 객체</param>
+public class PartRepoPsqlDb(IDbConnection _dbConnection) : IPartRepo
 {
-    private readonly IDbConnection _dbConnection;
 
-    public PartRepoPsqlDb(IDbConnection dbConnection)
+    public async Task<Part?> GetByIdAsync(string partId)
     {
-        _dbConnection = dbConnection;
+        const string query = "SELECT * FROM part WHERE id = @PartId";
+        return await _dbConnection.QuerySingleOrDefaultAsync<Part>(query, new { PartId = partId });
     }
 
-    public async Task<bool> ExistsByIdAsync(string partId)
-    {
-        const string query = "SELECT COUNT(1) FROM part WHERE id = @PartId";
-        return await _dbConnection.ExecuteScalarAsync<bool>(query, new { PartId = partId });
-    }
 
     public async Task AddAsync(Part part)
     {
@@ -33,11 +28,6 @@ public class PartRepoPsqlDb : IPartRepo
         await _dbConnection.ExecuteAsync(query, part);
     }
 
-    public async Task<Part?> GetByIdAsync(string partId)
-    {
-        const string query = "SELECT * FROM part WHERE id = @PartId";
-        return await _dbConnection.QuerySingleOrDefaultAsync<Part>(query, new { PartId = partId });
-    }
 
     public async Task DeleteAsync(string partId)
     {
