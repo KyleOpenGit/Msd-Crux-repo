@@ -21,7 +21,7 @@ public class LotService(ILotRepo _lotRepo) : ILotService
         string newLotId = $"{prefix}{latestSequence + 1}";
 
         // 새로운 Lot 최소 정보 추가
-        await _lotRepo.AddMinimalAsync(new Lot { Id = newLotId, PartId = request.PartId, LineId = request.LineId, IssuedTime = DateTime.UtcNow });
+        await _lotRepo.AddMinimalAsync(new Lot { Id = newLotId, PartId = request.PartId, LineId = request.LineId, IssuedTime = request.Date });
 
         return newLotId;
     }
