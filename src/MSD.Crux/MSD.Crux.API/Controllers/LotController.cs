@@ -18,8 +18,15 @@ public class LotController(ILotService _lotService) : ControllerBase
     [HttpGet("lots/completed")]
     public async Task<IActionResult> GetAllCompletedLots()
     {
-        IEnumerable<Lot?>? lots = await _lotService.GetAllCompletedLotsAsync();
-        return Ok(lots);
+        try
+        {
+            IEnumerable<Lot?>? lots = await _lotService.GetAllCompletedLotsAsync();
+            return Ok(lots);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, $"An error occurred: {ex.Message}");
+        }
     }
 
     /// <summary>
@@ -35,8 +42,20 @@ public class LotController(ILotService _lotService) : ControllerBase
             return BadRequest("PartId, LineId,  Date 모두 필수이며 값형식이 맞아야합니다.");
         }
 
-
-        string newLotId = await _lotService.IssueNewLotIdAsync(request);
-        return Ok(new { LotId = newLotId });
+        try
+        {
+            string newLotId = await _lotService.IssueNewLotIdAsync(request);
+            return Ok(new { LotId = newLotId });
+        }
+        catch (ArgumentException ex)
+        {
+            // 유효하지 않은 입력에 대한 처리
+            return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            // 예기치 않은 오류 처리
+            return StatusCode(500, $"An error occurred: {ex.Message}");
+        }
     }
 }
