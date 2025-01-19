@@ -40,6 +40,8 @@ public static class DiRegistrar
         // Crux 레포지토리 계층 등록
         services.AddTransient<IEmployeeRepo, EmployeeRepoPsqlDb>();
         services.AddTransient<IUserRepo, UserRepoPsqlDb>();
+        services.AddTransient<IPartRepo, PartRepoPsqlDb>();
+        services.AddTransient<ILineRepo, LineRepoPsqlDb>();
         services.AddTransient<IVisionCumRepo, VisionCumRepoPsqlDb>();
         services.AddTransient<IInjectionCumRepo, InjectionCumRepoPsqlDb>();
         services.AddTransient<ILotRepo, LotRepoPsqlDb>();

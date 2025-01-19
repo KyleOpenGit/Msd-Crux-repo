@@ -11,7 +11,7 @@ using MSD.Crux.Core.IRepositories;
 using MSD.Crux.Core.Models;
 using MSD.Crux.Core.Models.TCP;
 
-namespace MSD.Crux.StandAlone.TCP;
+namespace MSD.TCPServer;
 
 /// <summary>
 /// 백그라운드 프로세스로 TCP 소켓서버를 열고 연결을 기다리며 .

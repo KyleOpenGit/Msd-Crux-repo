@@ -82,12 +82,12 @@ public class InjectionPlanService(IInjectionPlanRepo _injectionPlanRepo) : IInje
                                                                 {
                                                                     InjectionPlan? firstPlan = group.First();
                                                                     return new InjWeeklyPlanRspDto
-                                                                           {
-                                                                               PartId = firstPlan.PartId,
-                                                                               WeekNumber = firstPlan.WeekNumber,
-                                                                               QtyWeekly = firstPlan.QtyWeekly,
-                                                                               DailyQtyList = group.Select(p => new DailyQty { Date = p.Date, Qty = p.QtyDaily }).OrderBy(d => d.Date).ToList()
-                                                                           };
+                                                                    {
+                                                                        PartId = firstPlan.PartId,
+                                                                        WeekNumber = firstPlan.WeekNumber,
+                                                                        QtyWeekly = firstPlan.QtyWeekly,
+                                                                        DailyQtyList = group.Select(p => new DailyQty { Date = p.Date, Qty = p.QtyDaily }).OrderBy(d => d.Date).ToList()
+                                                                    };
                                                                 }).ToList();
 
         return weeklyPartsPlan;

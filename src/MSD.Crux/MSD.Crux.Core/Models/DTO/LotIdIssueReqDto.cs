@@ -10,6 +10,10 @@ public class LotIdIssueReqDto
     /// </summary>
     public string PartId { get; set; } = string.Empty;
     /// <summary>
+    /// 생산라인 ID
+    /// </summary>
+    public string LineId { get; set; } = string.Empty;
+    /// <summary>
     /// 로트 발행 날짜 (yyyy-MM-dd)(2025-01-16)
     /// </summary>
     public DateTime Date { get; set; }

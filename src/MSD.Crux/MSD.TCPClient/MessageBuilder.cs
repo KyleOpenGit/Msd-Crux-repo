@@ -3,7 +3,7 @@ using Microsoft.Extensions.Configuration;
 using MSD.Crux.Common;
 using MSD.Crux.Core.Models;
 
-namespace MSD.Client.TCP;
+namespace MSD.TCPClient;
 
 /// <summary>
 /// 소켓통신으로 전송할 데이터(메시지)를 만든다

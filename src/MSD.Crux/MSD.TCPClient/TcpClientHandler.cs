@@ -5,7 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using MSD.Crux.Core.Models;
 
-namespace MSD.Client.TCP
+namespace MSD.TCPClient
 {
     public class TcpClientHandler
     {

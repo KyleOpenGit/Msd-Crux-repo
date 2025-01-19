@@ -2,8 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
-using MSD.Client.TCP;
 using MSD.Crux.Core.Models;
+using MSD.TCPClient;
 
 /// <summary>
 /// 소켓통신 커스텀 프로토콜 테스트용 클라이언트

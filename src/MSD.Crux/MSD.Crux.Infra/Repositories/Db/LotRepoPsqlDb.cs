@@ -36,7 +36,7 @@ public class LotRepoPsqlDb : ILotRepo
     public async Task<int> GetLatestSequenceOfIdAsync(string partId, DateTime date)
     {
         const string query = @"
-            SELECT COALESCE(MAX(SUBSTRING(id FROM '-(\d+)$')::INTEGER), 0)
+            SELECT COALESCE(MAX(CAST(SUBSTRING(id FROM '-(\d+)$') AS INTEGER)), 0)
             FROM lot
             WHERE id LIKE @Prefix || '%'";
         string prefix = $"{partId}-{date:yyyyMMdd}-";
@@ -54,9 +54,9 @@ public class LotRepoPsqlDb : ILotRepo
     public async Task AddMinimalAsync(Lot lot)
     {
         const string query = @"
-            INSERT INTO lot (id, part_id, issued_time)
-            VALUES (@Id, @PartId, @IssuedTime)";
-        await _dbConnection.ExecuteAsync(query, new { lot.Id, lot.PartId, lot.IssuedTime });
+            INSERT INTO lot (id, part_id, line_id, issued_time)
+            VALUES (@Id, @PartId, @LineId, @IssuedTime)";
+        await _dbConnection.ExecuteAsync(query, new { lot.Id, lot.PartId, lot.LineId, lot.IssuedTime });
     }
 
     public async Task UpdateAsync(Lot lot)

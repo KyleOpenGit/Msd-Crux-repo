@@ -88,7 +88,7 @@ public class LotRepoInMemory : ILotRepo
             throw new InvalidOperationException($"Lot ID {lot.Id}는 이미 존재합니다.");
         }
 
-        _lots[lot.Id] = new Lot { Id = lot.Id, PartId = lot.PartId, IssuedTime = lot.IssuedTime };
+        _lots[lot.Id] = new Lot { Id = lot.Id, PartId = lot.PartId, LineId = lot.LineId, IssuedTime = lot.IssuedTime };
 
         return Task.CompletedTask;
     }
@@ -145,8 +145,8 @@ public class LotRepoInMemory : ILotRepo
             throw new ArgumentException("Part ID는 필수입니다.", nameof(lot.PartId));
         }
 
-        // InjectionStart가 InjectionEnd보다 늦을 수 없음
-        if (lot.InjectionStart > lot.InjectionEnd)
+        // InjectionStart와 InjectionEnd 검증
+        if (lot.InjectionStart != default && lot.InjectionEnd != default && lot.InjectionStart > lot.InjectionEnd)
         {
             throw new ArgumentException("InjectionStart는 InjectionEnd보다 빠르거나 같아야 합니다.", nameof(lot.InjectionStart));
         }
