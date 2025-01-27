@@ -1,7 +1,8 @@
 # MESCADAS Crux
-MESCADAS Crux는 ***MESCADAS 프로젝트*** 의 중앙 서버 웹애플리케이션으로, MESCADAS  핵심 서비스의 관리와 조율을 위한 중심 허브 역할을 수행하도록 설계됩니다. 강력하고 고성능인 .NET Core를 기반으로 구축된 MESCADAS Crux는 현대 애플리케이션을 위한 확장 가능하고 신뢰할 수 있는 기반을 제공합니다.
+MESCADAS Crux는 **MESCADAS 지능형 스마트 팩토리** 시스템의 중앙 서버 웹애플리케이션으로, MESCADAS  핵심 서비스의 관리와 조율을 위한 중심 허브 역할을 수행하도록 설계됩니다. 강력하고 고성능인 .NET Core를 기반으로 구축된 MESCADAS Crux는 현대 애플리케이션을 위한 확장 가능하고 신뢰할 수 있는 기반을 제공합니다.
 > 이하, MSD Crux
 
+MESCADAS 지능형 스마트 팩토리에대한 더 자세한 내용은 [MSD Crux 문서 사이트](https://kyleopengit.github.io/MSD-Crux-Docs/)를 참고하시기 바랍니다.
 
 # ■ MSD Crux 소스 코드 관리
 ## 컨벤션
