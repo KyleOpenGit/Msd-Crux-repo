@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using MSD.Crux.Core.IRepositories;
-using MSD.Crux.Shared;
+using MSD.Crux.DI;
 using MSD.TCPServer;
 using Npgsql;
 

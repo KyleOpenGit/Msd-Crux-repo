@@ -4,7 +4,7 @@ using MSD.Crux.Core.IServices;
 using MSD.Crux.Infra.Repositories;
 using MSD.Crux.Infra.Services;
 
-namespace MSD.Crux.Shared;
+namespace MSD.Crux.DI;
 
 /// <summary>
 /// 여러 프로젝트의 공통적으로 호출할 수 있는 IServiceCollection 확장 메서드를 모은 클래스

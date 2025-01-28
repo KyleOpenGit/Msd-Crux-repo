@@ -29,7 +29,7 @@
     <ProjectReference Include="..\MSD.Crux.Host\MSD.Crux.Host.csproj"/>
     <ProjectReference Include="..\MSD.Crux.Infra\MSD.Crux.Infra.csproj"/>
     <ProjectReference Include="..\MSD.Crux.Common\MSD.Crux.Common.csproj"/>
-    <ProjectReference Include="..\MSD.Crux.Shared\MSD.Crux.Shared.csproj"/>
+    <ProjectReference Include="..\MSD.Crux.DI\MSD.Crux.DI.csproj" />
     <ProjectReference Include="..\MSD.TCPServer\MSD.TCPServer.csproj" />
   </ItemGroup>
 

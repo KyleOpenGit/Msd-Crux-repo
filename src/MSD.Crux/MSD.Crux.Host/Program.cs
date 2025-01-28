@@ -2,8 +2,8 @@ using System.Data;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using MSD.Crux.Common;
+using MSD.Crux.DI;
 using MSD.Crux.Host.Helpers;
-using MSD.Crux.Shared;
 using Npgsql;
 
 /*******************

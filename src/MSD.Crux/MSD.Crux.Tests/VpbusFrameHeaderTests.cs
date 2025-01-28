@@ -1,7 +1,7 @@
 using MSD.Crux.Core.Models.TCP;
 using NUnit.Framework;
 
-namespace MSD.Crux.Tests.Models;
+namespace MSD.Crux.Tests;
 
 [TestFixture]
 public class VpbusFrameHeaderTests

@@ -8,7 +8,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\MSD.Crux.API\MSD.Crux.API.csproj" />
-      <ProjectReference Include="..\MSD.Crux.Shared\MSD.Crux.Shared.csproj" />
+      <ProjectReference Include="..\MSD.Crux.DI\MSD.Crux.DI.csproj" />
     </ItemGroup>
 
     <ItemGroup>

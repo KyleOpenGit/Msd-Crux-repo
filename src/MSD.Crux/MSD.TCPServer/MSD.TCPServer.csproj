@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MSD.Crux.Common\MSD.Crux.Common.csproj" />
-    <ProjectReference Include="..\MSD.Crux.Shared\MSD.Crux.Shared.csproj" />
+    <ProjectReference Include="..\MSD.Crux.DI\MSD.Crux.DI.csproj" />
   </ItemGroup>
 
   <ItemGroup>
