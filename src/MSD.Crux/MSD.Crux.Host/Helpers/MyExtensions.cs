@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace MSD.Crux.API.Helpers;
+namespace MSD.Crux.Host.Helpers;
 
 /// <summary>
 /// 커스텀 확장 메서드 모음

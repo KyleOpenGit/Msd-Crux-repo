@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using MSD.Crux.API.Helpers;
 using MSD.Crux.Core.IServices;
 using MSD.Crux.Core.Models;
 
